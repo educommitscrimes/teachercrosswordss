@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Game Hub</title>
+  <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/IreadyOFFICIAL/images/refs/heads/main/Untitled.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -467,8 +468,6 @@
     .hero    { animation: fadeUp 0.5s ease both; }
     .divider { animation: fadeUp 0.5s 0.1s ease both; }
     .game-card { animation: fadeUp 0.4s ease both; }
-    
-    /* Animation delays for 39 items */
     .game-card:nth-child(1)  { animation-delay: 0.10s; }
     .game-card:nth-child(2)  { animation-delay: 0.14s; }
     .game-card:nth-child(3)  { animation-delay: 0.18s; }
@@ -493,25 +492,11 @@
     .game-card:nth-child(22) { animation-delay: 0.94s; }
     .game-card:nth-child(23) { animation-delay: 0.98s; }
     .game-card:nth-child(24) { animation-delay: 1.02s; }
-    .game-card:nth-child(25) { animation-delay: 1.06s; }
-    .game-card:nth-child(26) { animation-delay: 1.10s; }
-    .game-card:nth-child(27) { animation-delay: 1.14s; }
-    .game-card:nth-child(28) { animation-delay: 1.18s; }
-    .game-card:nth-child(29) { animation-delay: 1.22s; }
-    .game-card:nth-child(30) { animation-delay: 1.26s; }
-    .game-card:nth-child(31) { animation-delay: 1.30s; }
-    .game-card:nth-child(32) { animation-delay: 1.34s; }
-    .game-card:nth-child(33) { animation-delay: 1.38s; }
-    .game-card:nth-child(34) { animation-delay: 1.42s; }
-    .game-card:nth-child(35) { animation-delay: 1.46s; }
-    .game-card:nth-child(36) { animation-delay: 1.50s; }
-    .game-card:nth-child(37) { animation-delay: 1.54s; }
-    .game-card:nth-child(38) { animation-delay: 1.58s; }
-    .game-card:nth-child(39) { animation-delay: 1.62s; }
   </style>
 </head>
 <body>
 
+  <!-- ══ PASSWORD OVERLAY ══ -->
   <div id="passwordOverlay">
     <div class="pw-box" id="pwBox">
       <div class="pw-lock">🔒</div>
@@ -531,6 +516,7 @@
     </div>
   </div>
 
+  <!-- ══ MAIN CONTENT ══ -->
   <div id="mainContent">
     <div class="container">
 
@@ -557,7 +543,7 @@
             <span class="search-icon">⌕</span>
             <input id="searchInput" type="text" placeholder="Search games…" autocomplete="off" />
           </div>
-          <div class="count" id="gameCount">39 games available</div>
+          <div class="count" id="gameCount">24 games available</div>
         </div>
       </div>
 
@@ -713,96 +699,6 @@
           <h3 class="game-name">3Dash</h3>
         </a>
 
-        <a class="game-card" href="clamongus.html" data-name="among us imposter space multiplayer">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🔪</div>
-          <h3 class="game-name">Among Us</h3>
-        </a>
-
-        <a class="game-card" href="clangrybirds.html" data-name="angry birds puzzle slingshot">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🐦</div>
-          <h3 class="game-name">Angry Birds</h3>
-        </a>
-
-        <a class="game-card" href="clblazedrifter.html" data-name="blaze drifter car racing drift">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🏎️</div>
-          <h3 class="game-name">Blaze Drifter</h3>
-        </a>
-
-        <a class="game-card" href="clboxingrandom.html" data-name="boxing random fighting sports">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🥊</div>
-          <h3 class="game-name">Boxing Random</h3>
-        </a>
-
-        <a class="game-card" href="clcrossyroad.html" data-name="crossy road chicken arcade">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🐔</div>
-          <h3 class="game-name">Crossy Road</h3>
-        </a>
-
-        <a class="game-card" href="clcuttherope.html" data-name="cut the rope om nom puzzle">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🐸</div>
-          <h3 class="game-name">Cut The Rope</h3>
-        </a>
-
-        <a class="game-card" href="cldeathchase.html" data-name="death chase car racing action">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🚗</div>
-          <h3 class="game-name">Death Chase</h3>
-        </a>
-
-        <a class="game-card" href="cldunkshot.html" data-name="dunk shot basketball arcade">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🏀</div>
-          <h3 class="game-name">Dunk Shot</h3>
-        </a>
-
-        <a class="game-card" href="clextremerun3d.html" data-name="extreme run 3d platformer running">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🏃</div>
-          <h3 class="game-name">Extreme Run 3D</h3>
-        </a>
-
-        <a class="game-card" href="clfallguys.html" data-name="fall guys multiplayer racing">
-          <div class="tag tag-new">New</div>
-          <div class="icon">👑</div>
-          <h3 class="game-name">Fall Guys</h3>
-        </a>
-
-        <a class="game-card" href="clfireboyandwatergirl2.html" data-name="fireboy and watergirl 2 puzzle co-op">
-          <div class="tag tag-new">New</div>
-          <div class="icon">💧</div>
-          <h3 class="game-name">Fireboy & Watergirl 2</h3>
-        </a>
-
-        <a class="game-card" href="clfruitninja.html" data-name="fruit ninja slicing arcade">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🍉</div>
-          <h3 class="game-name">Fruit Ninja</h3>
-        </a>
-
-        <a class="game-card" href="clUltimatecardrivingsimulator.html" data-name="ultimate car driving simulator open world">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🚙</div>
-          <h3 class="game-name">Ultimate Car Driving Simulator</h3>
-        </a>
-
-        <a class="game-card" href="cluno.html" data-name="uno cards multiplayer family">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🃏</div>
-          <h3 class="game-name">Uno</h3>
-        </a>
-
-        <a class="game-card" href="DriveMad.html" data-name="drive mad physics car truck">
-          <div class="tag tag-new">New</div>
-          <div class="icon">🚚</div>
-          <h3 class="game-name">Drive Mad</h3>
-        </a>
-
       </div>
 
       <div class="footer">Made with <span>♥</span> by someone in lowellmiddleschool</div>
@@ -810,40 +706,6 @@
   </div>
 
   <script>
-
-/* ── SECRET SHIFT TRIGGER ── */
-let shiftCount = 0;
-let shiftTimer = null;
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Shift') {
-    shiftCount++;
-
-    // reset timer every press (so they must do it quickly)
-    clearTimeout(shiftTimer);
-    shiftTimer = setTimeout(() => {
-      shiftCount = 0;
-    }, 2000); // 2 seconds to press 5 times
-
-    if (shiftCount >= 5) {
-      shiftCount = 0;
-      openSecretPassword();
-    }
-  }
-});
-
-function openSecretPassword() {
-  const secret = prompt("Enter secret password:");
-
-  if (secret === "911") {
-    window.location.href = "Helios.html";
-  } else if (secret !== null) {
-    alert("Wrong secret password");
-  }
-}
-
-
-
     // ── PASSWORD ──
     const CORRECT_PASSWORD = 'lowell123'; // ← change this to whatever you want
 
