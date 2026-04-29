@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home - Classroom</title>
-  <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/educommitscrimes/imnages/refs/heads/main/Untitled%20(1).png" />
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/educommitscrimes/imnages/refs/heads/main/Untitled%20(1).png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -26,11 +26,11 @@
       font-family: 'DM Sans', sans-serif;
       color: var(--text);
       background: var(--bg);
+      overflow-x: hidden;
     }
 
     body::before {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       background:
         radial-gradient(ellipse 70% 50% at 20% -10%, rgba(180,120,40,0.15) 0%, transparent 60%),
         radial-gradient(ellipse 50% 40% at 90% 110%, rgba(120,80,20,0.12) 0%, transparent 55%);
@@ -38,39 +38,68 @@
     }
 
     body::after {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
       pointer-events: none; z-index: 0; opacity: 0.5;
     }
 
-    /* ══ PASSWORD OVERLAY ══ */
-    #passwordOverlay {
-      position: fixed; inset: 0; z-index: 9999;
-      display: flex; align-items: center; justify-content: center;
+    /* ══════════════════════════════
+       INTRO LAYER — covers everything
+    ══════════════════════════════ */
+    #introLayer {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       background: var(--bg);
+      transition: opacity 0.6s ease;
     }
 
-    #passwordOverlay::before {
-      content: '';
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 70% 50% at 20% -10%, rgba(180,120,40,0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 90% 110%, rgba(120,80,20,0.12) 0%, transparent 55%);
+    #introLayer.fade-out {
+      opacity: 0;
       pointer-events: none;
     }
 
+    /* Logo sits in the center */
+    #splashLogo {
+      width: 538px; max-width: 85vw; height: auto;
+      animation: splashPop 0.5s cubic-bezier(.22,.68,0,1.2) both;
+    }
+
+    @keyframes splashPop {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* Boxes slide up from bottom OVER the logo */
+    #introBoxWrap {
+      position: absolute; bottom: 60px; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
     .pw-box {
-      position: relative; z-index: 1;
       width: min(420px, calc(100% - 40px));
       padding: 44px 40px;
       border: 1px solid var(--border);
       border-radius: 28px;
-      background: linear-gradient(145deg, rgba(255,245,220,0.06), rgba(255,245,220,0.02));
-      backdrop-filter: blur(20px);
+      background: linear-gradient(145deg, rgba(255,245,220,0.08), rgba(255,245,220,0.03));
+      backdrop-filter: blur(24px);
       box-shadow: var(--shadow), inset 0 1px 0 rgba(255,235,180,0.06);
       text-align: center;
-      animation: fadeUp 0.45s ease both;
+      /* start off-screen below */
+      transform: translateY(calc(100% + 80px));
+      opacity: 0;
+      transition: transform 0.55s cubic-bezier(.22,.68,0,1.25), opacity 0.45s ease;
+      position: absolute;
+    }
+
+    .pw-box.slide-in {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .pw-box.slide-out {
+      transform: translateY(calc(100% + 80px));
+      opacity: 0;
     }
 
     .pw-lock { font-size: 2.6rem; margin-bottom: 18px; }
@@ -89,12 +118,11 @@
 
     .pw-input {
       width: 100%; padding: 14px 18px; border-radius: 14px;
-      border: 1px solid var(--border); background: rgba(12,10,8,0.7);
+      border: 1px solid var(--border); background: rgba(12,10,8,0.8);
       color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem;
       outline: none; text-align: center; letter-spacing: 0.08em;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-
     .pw-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,160,74,0.12); }
     .pw-input::placeholder { color: #5e5347; letter-spacing: 0; }
 
@@ -106,7 +134,6 @@
       font-size: 0.95rem; font-weight: 500; letter-spacing: 0.04em;
       cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.15s;
     }
-
     .pw-btn:hover {
       background: linear-gradient(135deg, rgba(201,160,74,0.28), rgba(140,100,40,0.2));
       border-color: rgba(201,160,74,0.5); transform: translateY(-1px);
@@ -116,22 +143,38 @@
     .pw-error.hidden { opacity: 0; }
 
     @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%      { transform: translateX(-8px); }
-      40%      { transform: translateX(8px); }
-      60%      { transform: translateX(-6px); }
-      80%      { transform: translateX(6px); }
+      0%,100% { transform: translateY(0) translateX(0); }
+      20%      { transform: translateY(0) translateX(-8px); }
+      40%      { transform: translateY(0) translateX(8px); }
+      60%      { transform: translateY(0) translateX(-6px); }
+      80%      { transform: translateY(0) translateX(6px); }
     }
-    .shake { animation: shake 0.4s ease; }
+    .shake { animation: shake 0.4s ease !important; }
 
-    /* ══ GAME IFRAME OVERLAY ══ */
+    /* Check bar */
+    .check-bar-wrap {
+      margin-top: 22px; height: 6px; border-radius: 999px;
+      background: rgba(255,255,255,0.07); overflow: hidden;
+    }
+    .check-bar {
+      height: 100%; width: 0%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--gold), var(--gold2));
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    .check-status {
+      margin-top: 14px; font-size: 0.9rem; font-weight: 500;
+      min-height: 22px; letter-spacing: 0.02em;
+    }
+    .check-status.ok    { color: #86efac; }
+    .check-status.error { color: #f87171; }
+
+    /* ══════════════════════════════
+       GAME IFRAME OVERLAY
+    ══════════════════════════════ */
     #gameOverlay {
-      display: none;
-      position: fixed; inset: 0; z-index: 8888;
-      background: #000;
-      flex-direction: column;
+      display: none; position: fixed; inset: 0; z-index: 8888;
+      background: #000; flex-direction: column;
     }
-
     #gameOverlay.active { display: flex; }
 
     .game-topbar {
@@ -139,32 +182,23 @@
       padding: 10px 16px;
       background: rgba(18,16,14,0.95);
       border-bottom: 1px solid var(--border);
-      gap: 12px;
-      flex-shrink: 0;
+      gap: 12px; flex-shrink: 0;
     }
-
-    .game-topbar-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem; font-weight: 700; color: var(--gold2);
-    }
-
+    .game-topbar-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--gold2); }
     .game-close-btn {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 7px 14px; border-radius: 999px;
-      border: 1px solid rgba(201,160,74,0.3);
-      background: rgba(201,160,74,0.08);
+      border: 1px solid rgba(201,160,74,0.3); background: rgba(201,160,74,0.08);
       color: var(--gold2); font-family: 'DM Sans', sans-serif;
       font-size: 0.82rem; font-weight: 500; cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
-
     .game-close-btn:hover { background: rgba(201,160,74,0.18); border-color: rgba(201,160,74,0.5); }
+    #gameFrame { flex: 1; width: 100%; border: none; display: block; }
 
-    #gameFrame {
-      flex: 1; width: 100%; border: none; display: block;
-    }
-
-    /* ══ MAIN CONTENT ══ */
+    /* ══════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════ */
     #mainContent { display: none; }
 
     .container {
@@ -174,93 +208,59 @@
     }
 
     .hero {
-      padding: 40px 44px;
-      border: 1px solid var(--border); border-radius: 28px;
+      padding: 40px 44px; border: 1px solid var(--border); border-radius: 28px;
       background: linear-gradient(145deg, rgba(255,245,220,0.06), rgba(255,245,220,0.02));
       backdrop-filter: blur(20px);
       box-shadow: var(--shadow), inset 0 1px 0 rgba(255,235,180,0.06);
       position: relative; overflow: hidden;
     }
-
     .hero-glow {
-      position: absolute; top: -60px; left: -60px;
-      width: 300px; height: 300px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(201,160,74,0.15), transparent 70%);
+      position: absolute; top: -60px; left: -60px; width: 300px; height: 300px;
+      border-radius: 50%; background: radial-gradient(circle, rgba(201,160,74,0.15), transparent 70%);
       pointer-events: none;
     }
-
     .top-row {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; gap: 16px; flex-wrap: wrap;
-      position: relative; z-index: 1;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 16px; flex-wrap: wrap; position: relative; z-index: 1;
     }
-
     .hero-title {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(2.6rem, 5vw, 4.2rem);
-      font-weight: 900; line-height: 0.95; letter-spacing: -0.03em;
+      font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 900;
+      line-height: 0.95; letter-spacing: -0.03em;
       background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 50%, #b8893a 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-
     .hero-subtitle { margin-top: 10px; color: var(--muted); font-size: 1rem; font-weight: 300; }
-
     .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
-
     .badge {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 16px; border-radius: 999px;
-      border: 1px solid var(--border); background: rgba(201,160,74,0.08);
+      display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px;
+      border-radius: 999px; border: 1px solid var(--border); background: rgba(201,160,74,0.08);
       color: var(--gold2); font-size: 0.85rem; font-weight: 500; white-space: nowrap;
     }
-
     .discord-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 9px 16px; border-radius: 999px;
-      border: 1px solid rgba(88,101,242,0.35); background: rgba(88,101,242,0.12);
-      color: #a5acf8; font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem; font-weight: 500; text-decoration: none; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px;
+      border-radius: 999px; border: 1px solid rgba(88,101,242,0.35); background: rgba(88,101,242,0.12);
+      color: #a5acf8; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
+      text-decoration: none; white-space: nowrap;
       transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
     }
-
-    .discord-btn:hover {
-      background: rgba(88,101,242,0.25); border-color: rgba(88,101,242,0.6);
-      color: #c5caff; transform: translateY(-2px);
-    }
-
+    .discord-btn:hover { background: rgba(88,101,242,0.25); border-color: rgba(88,101,242,0.6); color: #c5caff; transform: translateY(-2px); }
     .discord-icon { width: 16px; height: 16px; flex-shrink: 0; }
 
-    .search-wrap {
-      position: relative; z-index: 1;
-      margin-top: 28px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
-    }
-
+    .search-wrap { position: relative; z-index: 1; margin-top: 28px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
     .search {
       flex: 1 1 300px; display: flex; align-items: center; gap: 10px;
-      padding: 13px 18px; border-radius: 14px;
-      border: 1px solid var(--border); background: rgba(12,10,8,0.6);
-      transition: border-color 0.2s;
+      padding: 13px 18px; border-radius: 14px; border: 1px solid var(--border);
+      background: rgba(12,10,8,0.6); transition: border-color 0.2s;
     }
-
     .search:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,160,74,0.1); }
     .search-icon { color: var(--gold); font-size: 0.95rem; flex-shrink: 0; }
-
-    .search input {
-      width: 100%; border: none; outline: none; background: transparent;
-      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
-    }
-
+    .search input { width: 100%; border: none; outline: none; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; }
     .search input::placeholder { color: #5e5347; }
     .count { color: var(--muted); font-size: 0.9rem; letter-spacing: 0.02em; }
 
     .divider { margin: 34px 0 22px; display: flex; align-items: center; gap: 16px; }
-
-    .divider h2 {
-      font-family: 'Playfair Display', serif; font-size: 1.4rem;
-      font-weight: 700; letter-spacing: -0.02em; white-space: nowrap;
-    }
-
+    .divider h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
     .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, var(--border), transparent); }
     .divider-sub { color: var(--muted); font-size: 0.88rem; }
 
@@ -268,43 +268,27 @@
 
     .game-card {
       display: block; text-decoration: none; color: inherit;
-      padding: 22px 20px 20px; border-radius: 22px;
-      border: 1px solid var(--border);
+      padding: 22px 20px 20px; border-radius: 22px; border: 1px solid var(--border);
       background: linear-gradient(150deg, rgba(255,245,220,0.055), rgba(255,245,220,0.02));
       backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.4);
       transition: transform 0.22s cubic-bezier(.22,.68,0,1.4), border-color 0.22s, box-shadow 0.22s;
       position: relative; overflow: hidden; min-height: 160px; cursor: pointer;
     }
-
     .game-card::before {
       content: ''; position: absolute; bottom: -40px; right: -40px;
       width: 130px; height: 130px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(201,160,74,0.12), transparent 70%);
-      pointer-events: none;
+      background: radial-gradient(circle, rgba(201,160,74,0.12), transparent 70%); pointer-events: none;
     }
-
     .game-card:hover {
-      transform: translateY(-5px) scale(1.015);
-      border-color: rgba(201,160,74,0.35);
+      transform: translateY(-5px) scale(1.015); border-color: rgba(201,160,74,0.35);
       box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,160,74,0.12);
     }
 
-    .tag {
-      position: absolute; top: 16px; right: 16px;
-      padding: 4px 10px; border-radius: 999px;
-      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-    }
-
+    .tag { position: absolute; top: 16px; right: 16px; padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
     .tag-new     { background: rgba(201,160,74,0.14); color: var(--gold2); border: 1px solid rgba(201,160,74,0.22); }
     .tag-classic { background: rgba(180,140,100,0.12); color: #c8a87a;    border: 1px solid rgba(180,140,100,0.2); }
 
-    .icon {
-      width: 52px; height: 52px; border-radius: 16px;
-      display: grid; place-items: center; font-size: 1.55rem; margin-bottom: 14px;
-      background: linear-gradient(145deg, rgba(201,160,74,0.2), rgba(140,100,40,0.15));
-      border: 1px solid rgba(201,160,74,0.18); box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-    }
-
+    .icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 1.55rem; margin-bottom: 14px; background: linear-gradient(145deg, rgba(201,160,74,0.2), rgba(140,100,40,0.15)); border: 1px solid rgba(201,160,74,0.18); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
     .game-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; letter-spacing: -0.02em; }
 
     .empty-state { grid-column: 1/-1; text-align: center; padding: 48px 20px; color: var(--muted); }
@@ -324,63 +308,36 @@
       from { opacity: 0; transform: translateY(18px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
     .hero    { animation: fadeUp 0.5s ease both; }
     .divider { animation: fadeUp 0.5s 0.1s ease both; }
-    .game-card { animation: fadeUp 0.4s ease both; }
-    .game-card:nth-child(n) { animation-delay: calc(0.08s + (var(--i, 0) * 0.04s)); }
-
-    /* ── CHECK BAR ── */
-    .check-bar-wrap {
-      margin-top: 22px;
-      height: 6px; border-radius: 999px;
-      background: rgba(255,255,255,0.07);
-      overflow: hidden;
-    }
-
-    .check-bar {
-      height: 100%; width: 0%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--gold), var(--gold2));
-      transition: width 1.2s cubic-bezier(.4,0,.2,1);
-    }
-
-    .check-status {
-      margin-top: 14px;
-      font-size: 0.9rem; font-weight: 500;
-      min-height: 22px; letter-spacing: 0.02em;
-      transition: color 0.3s;
-    }
-
-    .check-status.ok    { color: #86efac; }
-    .check-status.error { color: #f87171; }
   </style>
 </head>
 <body>
 
-  <!-- ══ PASSWORD OVERLAY ══ -->
-  <div id="passwordOverlay">
-
-    <!-- Checking screen -->
-    <div class="pw-box" id="checkingBox">
-      <div class="pw-lock" id="checkIcon">⏳</div>
-      <div class="pw-title">Totally Classroom</div>
-      <p class="pw-subtitle" id="checkMsg">Checking if password put…</p>
-      <div class="check-bar-wrap"><div class="check-bar" id="checkBar"></div></div>
-      <p class="check-status" id="checkStatus"></p>
-    </div>
-
-    <!-- Login screen (hidden until needed) -->
-    <div class="pw-box" id="pwBox" style="display:none">
-      <div class="pw-lock">🔒</div>
-      <div class="pw-title">Totally Classroom</div>
-      <p class="pw-subtitle">Enter the password to continue</p>
-      <div class="pw-input-wrap">
-        <input class="pw-input" id="pwInput" type="password" placeholder="Password…" autocomplete="off" />
-        <button class="pw-btn" id="pwBtn">Enter →</button>
+  <!-- ══ INTRO LAYER (splash bg + sliding boxes) ══ -->
+  <div id="introLayer">
+    <img id="splashLogo" src="https://raw.githubusercontent.com/educommitscrimes/imnages/refs/heads/main/Totally-Classroom.png" alt="Totally Classroom" />
+    <div id="introBoxWrap">
+      <!-- Checking box -->
+      <div class="pw-box" id="checkingBox">
+        <div class="pw-lock" id="checkIcon">⏳</div>
+        <div class="pw-title">Totally Classroom</div>
+        <p class="pw-subtitle" id="checkMsg">Checking if password put…</p>
+        <div class="check-bar-wrap"><div class="check-bar" id="checkBar"></div></div>
+        <p class="check-status" id="checkStatus"></p>
       </div>
-      <p class="pw-error hidden" id="pwError">Incorrect password. Try again.</p>
+      <!-- Login box -->
+      <div class="pw-box" id="pwBox">
+        <div class="pw-lock">🔒</div>
+        <div class="pw-title">Totally Classroom</div>
+        <p class="pw-subtitle">Enter the password to continue</p>
+        <div class="pw-input-wrap">
+          <input class="pw-input" id="pwInput" type="password" placeholder="Password…" autocomplete="off" />
+          <button class="pw-btn" id="pwBtn">Enter →</button>
+        </div>
+        <p class="pw-error hidden" id="pwError">Incorrect password. Try again.</p>
+      </div>
     </div>
-
   </div>
 
   <!-- ══ GAME IFRAME OVERLAY ══ -->
@@ -395,7 +352,6 @@
   <!-- ══ MAIN HUB ══ -->
   <div id="mainContent">
     <div class="container">
-
       <div class="hero">
         <div class="hero-glow"></div>
         <div class="top-row">
@@ -413,7 +369,6 @@
             <div class="badge">⭐ lowellmiddleschool</div>
           </div>
         </div>
-
         <div class="search-wrap">
           <div class="search">
             <span class="search-icon">⌕</span>
@@ -429,18 +384,14 @@
         <span class="divider-sub">Click any card to play</span>
       </div>
 
-      <div class="grid" id="gameGrid">
-        <!-- cards injected by JS -->
-      </div>
+      <div class="grid" id="gameGrid"></div>
 
       <div class="footer">Made with <span>♥</span> by someone in lowellmiddleschool</div>
     </div>
   </div>
 
   <script>
-    // ═══════════════════════════════════════
-    // GAME LIST — add / remove games here
-    // ═══════════════════════════════════════
+
     const GAMES = [
       // Original games
       { name: 'Space Clicker',            file: 'spaceclicker.html',            icon: '🚀', tag: 'new',     keys: 'space clicker clicking' },
@@ -549,79 +500,86 @@
     // ═══════════════════════════════════════
     // PASSWORD + AUTO-LOGIN
     // ═══════════════════════════════════════
-    const CORRECT_PASSWORD = 'lowell123'; // ← change to your password
+    const CORRECT_PASSWORD = 'lowell123';
     const STORAGE_KEY      = 'tc_auth';
 
-    const overlay      = document.getElementById('passwordOverlay');
-    const checkingBox  = document.getElementById('checkingBox');
-    const checkBar     = document.getElementById('checkBar');
-    const checkMsg     = document.getElementById('checkMsg');
-    const checkIcon    = document.getElementById('checkIcon');
-    const checkStatus  = document.getElementById('checkStatus');
-    const pwBox        = document.getElementById('pwBox');
-    const pwInput      = document.getElementById('pwInput');
-    const pwBtn        = document.getElementById('pwBtn');
-    const pwError      = document.getElementById('pwError');
-    const mainContent  = document.getElementById('mainContent');
+    const introLayer  = document.getElementById('introLayer');
+    const checkingBox = document.getElementById('checkingBox');
+    const checkBar    = document.getElementById('checkBar');
+    const checkIcon   = document.getElementById('checkIcon');
+    const checkStatus = document.getElementById('checkStatus');
+    const pwBox       = document.getElementById('pwBox');
+    const pwInput     = document.getElementById('pwInput');
+    const pwBtn       = document.getElementById('pwBtn');
+    const pwError     = document.getElementById('pwError');
+    const mainContent = document.getElementById('mainContent');
 
     function enterSite() {
-      overlay.style.transition = 'opacity 0.4s ease';
-      overlay.style.opacity = '0';
-      setTimeout(() => {
-        overlay.style.display = 'none';
-        mainContent.style.display = 'block';
-        buildGrid();
-        updateCount();
-      }, 400);
-    }
-
-    function showLoginForm() {
-      checkingBox.style.transition = 'opacity 0.3s';
-      checkingBox.style.opacity = '0';
-      setTimeout(() => {
-        checkingBox.style.display = 'none';
-        pwBox.style.display = 'block';
-        pwBox.style.animation = 'fadeUp 0.4s ease both';
-        pwInput.focus();
-      }, 300);
-    }
-
-    // On page load — always show the checking screen first
-    window.addEventListener('DOMContentLoaded', () => {
-      // Animate the bar to 100%
-      requestAnimationFrame(() => {
-        setTimeout(() => { checkBar.style.width = '100%'; }, 50);
+      // slide active box out then fade intro layer
+      [checkingBox, pwBox].forEach(b => {
+        b.classList.remove('slide-in');
+        b.classList.add('slide-out');
       });
+      setTimeout(() => {
+        introLayer.classList.add('fade-out');
+        setTimeout(() => {
+          introLayer.style.display = 'none';
+          mainContent.style.display = 'block';
+          buildGrid();
+          updateCount();
+        }, 650);
+      }, 350);
+    }
 
+    function slideIn(box) {
+      box.classList.remove('slide-out');
+      // force reflow so transition fires
+      void box.offsetWidth;
+      box.classList.add('slide-in');
+    }
+
+    function slideOut(box, cb) {
+      box.classList.remove('slide-in');
+      box.classList.add('slide-out');
+      setTimeout(() => { if (cb) cb(); }, 500);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem(STORAGE_KEY);
 
-      if (saved === CORRECT_PASSWORD) {
-        // Password found — show Checked
-        setTimeout(() => {
-          checkIcon.textContent = '✅';
-          checkMsg.textContent  = 'Checking if password put…';
-          checkStatus.textContent = 'Checked — logging you in!';
-          checkStatus.classList.add('ok');
-        }, 800);
+      // After 2 seconds show the checking box sliding up
+      setTimeout(() => {
+        slideIn(checkingBox);
 
-        setTimeout(() => enterSite(), 1800);
+        // animate bar
+        setTimeout(() => { checkBar.style.width = '100%'; }, 100);
 
-      } else {
-        // No saved password — show Error then login form
-        setTimeout(() => {
-          checkIcon.textContent = '❌';
-          checkMsg.textContent  = 'Checking if password put…';
-          checkStatus.textContent = 'Error — no password found.';
-          checkStatus.classList.add('error');
-        }, 800);
-
-        setTimeout(() => showLoginForm(), 1900);
-      }
+        if (saved === CORRECT_PASSWORD) {
+          setTimeout(() => {
+            checkIcon.textContent = '✅';
+            checkStatus.textContent = 'Checked — logging you in!';
+            checkStatus.classList.add('ok');
+          }, 900);
+          setTimeout(() => enterSite(), 1900);
+        } else {
+          setTimeout(() => {
+            checkIcon.textContent = '❌';
+            checkStatus.textContent = 'Error — no password found.';
+            checkStatus.classList.add('error');
+          }, 900);
+          setTimeout(() => {
+            slideOut(checkingBox, () => {
+              slideIn(pwBox);
+              setTimeout(() => pwInput.focus(), 100);
+            });
+          }, 2000);
+        }
+      }, 2000);
     });
 
     function tryPassword() {
       if (pwInput.value === CORRECT_PASSWORD) {
-        localStorage.setItem(STORAGE_KEY, CORRECT_PASSWORD); // save for next visit
+        localStorage.setItem(STORAGE_KEY, CORRECT_PASSWORD);
         enterSite();
       } else {
         pwError.classList.remove('hidden');
@@ -717,6 +675,7 @@
       });
       updateCount();
     });
+
   </script>
 </body>
 </html>
