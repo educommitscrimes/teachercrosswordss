@@ -11,313 +11,151 @@
   <style>
     :root {
       --bg:     #12100e;
-      --border: rgba(255, 220, 150, 0.12);
+      --border: rgba(255,220,150,0.12);
       --text:   #f5ede0;
       --muted:  #a89880;
       --gold:   #c9a04a;
       --gold2:  #e8c97e;
       --shadow: 0 24px 64px rgba(0,0,0,0.55);
     }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 20% -10%,rgba(180,120,40,.15) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 110%,rgba(120,80,20,.12) 0%,transparent 55%);pointer-events:none;z-index:0}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ══ COOKIE BANNER ══ */
+    #cookieBanner{position:fixed;bottom:0;left:0;right:0;z-index:999999;background:rgba(20,17,14,.97);border-top:1px solid var(--border);backdrop-filter:blur(16px);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;transform:translateY(100%);transition:transform .4s cubic-bezier(.22,.68,0,1.2)}
+    #cookieBanner.show{transform:translateY(0)}
+    .cookie-text{font-size:.88rem;color:var(--muted);flex:1 1 300px}
+    .cookie-text strong{color:var(--text)}
+    .cookie-accept{padding:10px 22px;border-radius:999px;border:1px solid rgba(201,160,74,.3);background:rgba(201,160,74,.12);color:var(--gold2);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .2s,border-color .2s}
+    .cookie-accept:hover{background:rgba(201,160,74,.22);border-color:rgba(201,160,74,.5)}
 
-    html, body {
-      min-height: 100%;
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      background: var(--bg);
-      overflow-x: hidden;
-    }
+    /* ══ INTRO LAYER ══ */
+    #introLayer{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;transition:opacity .6s ease}
+    #introLayer.fade-out{opacity:0;pointer-events:none}
+    #splashBg{position:absolute;inset:0;background-image:url('https://raw.githubusercontent.com/educommitscrimes/imnages/refs/heads/main/free-photo-of-textured-welcome-sign-on-stone-surface.jpeg');background-size:cover;background-position:center;filter:brightness(.45)}
+    #splashLogo{position:relative;z-index:1;width:538px;max-width:85vw;height:auto;animation:splashPop .5s cubic-bezier(.22,.68,0,1.2) both}
+    @keyframes splashPop{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
 
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse 70% 50% at 20% -10%, rgba(180,120,40,0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 90% 110%, rgba(120,80,20,0.12) 0%, transparent 55%);
-      pointer-events: none; z-index: 0;
-    }
+    #introBoxWrap{position:absolute;bottom:50px;left:0;right:0;display:flex;align-items:center;justify-content:center;z-index:2;min-height:420px}
 
-    body::after {
-      content: ''; position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none; z-index: 0; opacity: 0.5;
-    }
+    .pw-box{width:min(420px,calc(100% - 40px));padding:40px 36px;border:1px solid var(--border);border-radius:28px;background:rgba(18,16,14,.88);backdrop-filter:blur(28px);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,235,180,.06);text-align:center;position:absolute;transform:translateY(calc(100% + 120px));opacity:0;transition:transform .55s cubic-bezier(.22,.68,0,1.25),opacity .45s ease}
+    .pw-box.slide-in{transform:translateY(0);opacity:1}
+    .pw-box.slide-out{transform:translateY(calc(100% + 120px));opacity:0}
+    .pw-lock{font-size:2.4rem;margin-bottom:14px}
+    .pw-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,var(--gold2) 0%,var(--gold) 50%,#b8893a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+    .pw-subtitle{color:var(--muted);font-size:.9rem;font-weight:300;margin-bottom:24px}
+    .pw-input-wrap{display:flex;flex-direction:column;gap:10px}
+    .pw-input{width:100%;padding:13px 16px;border-radius:14px;border:1px solid var(--border);background:rgba(12,10,8,.8);color:var(--text);font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;text-align:center;letter-spacing:.06em;transition:border-color .2s,box-shadow .2s}
+    .pw-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,160,74,.12)}
+    .pw-input::placeholder{color:#5e5347;letter-spacing:0}
+    .pw-btn{width:100%;padding:13px;border-radius:14px;border:1px solid rgba(201,160,74,.3);background:linear-gradient(135deg,rgba(201,160,74,.18),rgba(140,100,40,.12));color:var(--gold2);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;letter-spacing:.04em;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
+    .pw-btn:hover{background:linear-gradient(135deg,rgba(201,160,74,.28),rgba(140,100,40,.2));border-color:rgba(201,160,74,.5);transform:translateY(-1px)}
+    .pw-error{margin-top:10px;font-size:.85rem;color:#f87171;min-height:20px}
+    .pw-error.hidden{opacity:0}
+    .pw-hint{margin-top:8px;font-size:.78rem;color:var(--muted)}
+    @keyframes shake{0%,100%{transform:translateY(0) translateX(0)}20%{transform:translateY(0) translateX(-8px)}40%{transform:translateY(0) translateX(8px)}60%{transform:translateY(0) translateX(-6px)}80%{transform:translateY(0) translateX(6px)}}
+    .shake{animation:shake .4s ease !important}
+    .check-bar-wrap{margin-top:20px;height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+    .check-bar{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+    .check-status{margin-top:12px;font-size:.9rem;font-weight:500;min-height:20px;letter-spacing:.02em}
+    .check-status.ok{color:#86efac}
+    .check-status.error{color:#f87171}
 
-    /* ══════════════════════════════
-       INTRO LAYER — covers everything
-    ══════════════════════════════ */
-    #introLayer {
-      position: fixed; inset: 0; z-index: 99999;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      background: var(--bg);
-      transition: opacity 0.6s ease;
-    }
+    /* ══ ADMIN PANEL ══ */
+    #adminPanel{display:none;position:fixed;inset:0;z-index:88888;background:var(--bg);overflow-y:auto}
+    #adminPanel::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 20% -10%,rgba(180,120,40,.15) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 110%,rgba(120,80,20,.12) 0%,transparent 55%);pointer-events:none;z-index:0}
+    .admin-inner{position:relative;z-index:1;width:min(1000px,calc(100% - 32px));margin:0 auto;padding:36px 0 56px}
+    .admin-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:28px}
+    .admin-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .admin-logout{padding:9px 18px;border-radius:999px;border:1px solid rgba(201,160,74,.3);background:rgba(201,160,74,.08);color:var(--gold2);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:background .2s}
+    .admin-logout:hover{background:rgba(201,160,74,.18)}
+    .admin-clear{padding:9px 18px;border-radius:999px;border:1px solid rgba(248,113,113,.3);background:rgba(248,113,113,.08);color:#f87171;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:background .2s}
+    .admin-clear:hover{background:rgba(248,113,113,.18)}
+    .admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+    .stat-card{padding:20px;border-radius:18px;border:1px solid var(--border);background:rgba(255,245,220,.04);text-align:center}
+    .stat-num{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;color:var(--gold2)}
+    .stat-label{color:var(--muted);font-size:.85rem;margin-top:4px}
+    .admin-section-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--gold2);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+    .log-table{width:100%;border-collapse:collapse;font-size:.88rem}
+    .log-table th{text-align:left;padding:10px 14px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase}
+    .log-table td{padding:12px 14px;border-bottom:1px solid rgba(255,220,150,.06);vertical-align:top}
+    .log-table tr:hover td{background:rgba(255,245,220,.03)}
+    .log-name{color:var(--gold2);font-weight:500}
+    .log-time{color:var(--muted);font-size:.82rem}
+    .log-games{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+    .log-game-tag{padding:3px 10px;border-radius:999px;background:rgba(201,160,74,.1);color:var(--gold);font-size:.78rem;border:1px solid rgba(201,160,74,.15)}
+    .no-logs{text-align:center;color:var(--muted);padding:40px 0;font-size:.95rem}
 
-    #introLayer.fade-out {
-      opacity: 0;
-      pointer-events: none;
-    }
+    /* ══ GAME IFRAME ══ */
+    #gameOverlay{display:none;position:fixed;inset:0;z-index:8888;background:#000;flex-direction:column}
+    #gameOverlay.active{display:flex}
+    .game-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(18,16,14,.95);border-bottom:1px solid var(--border);gap:12px;flex-shrink:0}
+    .game-topbar-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--gold2)}
+    .game-close-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1px solid rgba(201,160,74,.3);background:rgba(201,160,74,.08);color:var(--gold2);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:background .2s}
+    .game-close-btn:hover{background:rgba(201,160,74,.18);border-color:rgba(201,160,74,.5)}
+    #gameFrame{flex:1;width:100%;border:none;display:block}
 
-    /* Logo sits in the center */
-    #splashLogo {
-      width: 538px; max-width: 85vw; height: auto;
-      animation: splashPop 0.5s cubic-bezier(.22,.68,0,1.2) both;
-    }
-
-    @keyframes splashPop {
-      from { opacity: 0; transform: scale(0.88); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    /* Boxes slide up from bottom OVER the logo */
-    #introBoxWrap {
-      position: absolute; bottom: 60px; left: 0; right: 0;
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    .pw-box {
-      width: min(420px, calc(100% - 40px));
-      padding: 44px 40px;
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      background: linear-gradient(145deg, rgba(255,245,220,0.08), rgba(255,245,220,0.03));
-      backdrop-filter: blur(24px);
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,235,180,0.06);
-      text-align: center;
-      /* start off-screen below */
-      transform: translateY(calc(100% + 80px));
-      opacity: 0;
-      transition: transform 0.55s cubic-bezier(.22,.68,0,1.25), opacity 0.45s ease;
-      position: absolute;
-    }
-
-    .pw-box.slide-in {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    .pw-box.slide-out {
-      transform: translateY(calc(100% + 80px));
-      opacity: 0;
-    }
-
-    .pw-lock { font-size: 2.6rem; margin-bottom: 18px; }
-
-    .pw-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem; font-weight: 900; letter-spacing: -0.03em;
-      background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 50%, #b8893a 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; margin-bottom: 8px;
-    }
-
-    .pw-subtitle { color: var(--muted); font-size: 0.9rem; font-weight: 300; margin-bottom: 28px; }
-
-    .pw-input-wrap { display: flex; flex-direction: column; gap: 12px; }
-
-    .pw-input {
-      width: 100%; padding: 14px 18px; border-radius: 14px;
-      border: 1px solid var(--border); background: rgba(12,10,8,0.8);
-      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem;
-      outline: none; text-align: center; letter-spacing: 0.08em;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .pw-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,160,74,0.12); }
-    .pw-input::placeholder { color: #5e5347; letter-spacing: 0; }
-
-    .pw-btn {
-      width: 100%; padding: 14px; border-radius: 14px;
-      border: 1px solid rgba(201,160,74,0.3);
-      background: linear-gradient(135deg, rgba(201,160,74,0.18), rgba(140,100,40,0.12));
-      color: var(--gold2); font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem; font-weight: 500; letter-spacing: 0.04em;
-      cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.15s;
-    }
-    .pw-btn:hover {
-      background: linear-gradient(135deg, rgba(201,160,74,0.28), rgba(140,100,40,0.2));
-      border-color: rgba(201,160,74,0.5); transform: translateY(-1px);
-    }
-
-    .pw-error { margin-top: 12px; font-size: 0.85rem; color: #f87171; min-height: 20px; }
-    .pw-error.hidden { opacity: 0; }
-
-    @keyframes shake {
-      0%,100% { transform: translateY(0) translateX(0); }
-      20%      { transform: translateY(0) translateX(-8px); }
-      40%      { transform: translateY(0) translateX(8px); }
-      60%      { transform: translateY(0) translateX(-6px); }
-      80%      { transform: translateY(0) translateX(6px); }
-    }
-    .shake { animation: shake 0.4s ease !important; }
-
-    /* Check bar */
-    .check-bar-wrap {
-      margin-top: 22px; height: 6px; border-radius: 999px;
-      background: rgba(255,255,255,0.07); overflow: hidden;
-    }
-    .check-bar {
-      height: 100%; width: 0%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--gold), var(--gold2));
-      transition: width 1.2s cubic-bezier(.4,0,.2,1);
-    }
-    .check-status {
-      margin-top: 14px; font-size: 0.9rem; font-weight: 500;
-      min-height: 22px; letter-spacing: 0.02em;
-    }
-    .check-status.ok    { color: #86efac; }
-    .check-status.error { color: #f87171; }
-
-    /* ══════════════════════════════
-       GAME IFRAME OVERLAY
-    ══════════════════════════════ */
-    #gameOverlay {
-      display: none; position: fixed; inset: 0; z-index: 8888;
-      background: #000; flex-direction: column;
-    }
-    #gameOverlay.active { display: flex; }
-
-    .game-topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px;
-      background: rgba(18,16,14,0.95);
-      border-bottom: 1px solid var(--border);
-      gap: 12px; flex-shrink: 0;
-    }
-    .game-topbar-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--gold2); }
-    .game-close-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 14px; border-radius: 999px;
-      border: 1px solid rgba(201,160,74,0.3); background: rgba(201,160,74,0.08);
-      color: var(--gold2); font-family: 'DM Sans', sans-serif;
-      font-size: 0.82rem; font-weight: 500; cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .game-close-btn:hover { background: rgba(201,160,74,0.18); border-color: rgba(201,160,74,0.5); }
-    #gameFrame { flex: 1; width: 100%; border: none; display: block; }
-
-    /* ══════════════════════════════
-       MAIN CONTENT
-    ══════════════════════════════ */
-    #mainContent { display: none; }
-
-    .container {
-      position: relative; z-index: 1;
-      width: min(1100px, calc(100% - 32px));
-      margin: 0 auto; padding: 36px 0 56px;
-    }
-
-    .hero {
-      padding: 40px 44px; border: 1px solid var(--border); border-radius: 28px;
-      background: linear-gradient(145deg, rgba(255,245,220,0.06), rgba(255,245,220,0.02));
-      backdrop-filter: blur(20px);
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,235,180,0.06);
-      position: relative; overflow: hidden;
-    }
-    .hero-glow {
-      position: absolute; top: -60px; left: -60px; width: 300px; height: 300px;
-      border-radius: 50%; background: radial-gradient(circle, rgba(201,160,74,0.15), transparent 70%);
-      pointer-events: none;
-    }
-    .top-row {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      gap: 16px; flex-wrap: wrap; position: relative; z-index: 1;
-    }
-    .hero-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 900;
-      line-height: 0.95; letter-spacing: -0.03em;
-      background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 50%, #b8893a 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .hero-subtitle { margin-top: 10px; color: var(--muted); font-size: 1rem; font-weight: 300; }
-    .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px;
-      border-radius: 999px; border: 1px solid var(--border); background: rgba(201,160,74,0.08);
-      color: var(--gold2); font-size: 0.85rem; font-weight: 500; white-space: nowrap;
-    }
-    .discord-btn {
-      display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px;
-      border-radius: 999px; border: 1px solid rgba(88,101,242,0.35); background: rgba(88,101,242,0.12);
-      color: #a5acf8; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
-      text-decoration: none; white-space: nowrap;
-      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
-    }
-    .discord-btn:hover { background: rgba(88,101,242,0.25); border-color: rgba(88,101,242,0.6); color: #c5caff; transform: translateY(-2px); }
-    .discord-icon { width: 16px; height: 16px; flex-shrink: 0; }
-
-    .search-wrap { position: relative; z-index: 1; margin-top: 28px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-    .search {
-      flex: 1 1 300px; display: flex; align-items: center; gap: 10px;
-      padding: 13px 18px; border-radius: 14px; border: 1px solid var(--border);
-      background: rgba(12,10,8,0.6); transition: border-color 0.2s;
-    }
-    .search:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,160,74,0.1); }
-    .search-icon { color: var(--gold); font-size: 0.95rem; flex-shrink: 0; }
-    .search input { width: 100%; border: none; outline: none; background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; }
-    .search input::placeholder { color: #5e5347; }
-    .count { color: var(--muted); font-size: 0.9rem; letter-spacing: 0.02em; }
-
-    .divider { margin: 34px 0 22px; display: flex; align-items: center; gap: 16px; }
-    .divider h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
-    .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, var(--border), transparent); }
-    .divider-sub { color: var(--muted); font-size: 0.88rem; }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-
-    .game-card {
-      display: block; text-decoration: none; color: inherit;
-      padding: 22px 20px 20px; border-radius: 22px; border: 1px solid var(--border);
-      background: linear-gradient(150deg, rgba(255,245,220,0.055), rgba(255,245,220,0.02));
-      backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      transition: transform 0.22s cubic-bezier(.22,.68,0,1.4), border-color 0.22s, box-shadow 0.22s;
-      position: relative; overflow: hidden; min-height: 160px; cursor: pointer;
-    }
-    .game-card::before {
-      content: ''; position: absolute; bottom: -40px; right: -40px;
-      width: 130px; height: 130px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(201,160,74,0.12), transparent 70%); pointer-events: none;
-    }
-    .game-card:hover {
-      transform: translateY(-5px) scale(1.015); border-color: rgba(201,160,74,0.35);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,160,74,0.12);
-    }
-
-    .tag { position: absolute; top: 16px; right: 16px; padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
-    .tag-new     { background: rgba(201,160,74,0.14); color: var(--gold2); border: 1px solid rgba(201,160,74,0.22); }
-    .tag-classic { background: rgba(180,140,100,0.12); color: #c8a87a;    border: 1px solid rgba(180,140,100,0.2); }
-
-    .icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 1.55rem; margin-bottom: 14px; background: linear-gradient(145deg, rgba(201,160,74,0.2), rgba(140,100,40,0.15)); border: 1px solid rgba(201,160,74,0.18); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-    .game-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; letter-spacing: -0.02em; }
-
-    .empty-state { grid-column: 1/-1; text-align: center; padding: 48px 20px; color: var(--muted); }
-    .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
-
-    .footer { margin-top: 36px; text-align: center; color: #3d3228; font-size: 0.85rem; letter-spacing: 0.04em; }
-    .footer span { color: var(--gold); }
-
-    .hidden { display: none !important; }
-
-    @media (max-width: 640px) {
-      .hero { padding: 24px 20px; border-radius: 20px; }
-      .game-card { min-height: 140px; }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .hero    { animation: fadeUp 0.5s ease both; }
-    .divider { animation: fadeUp 0.5s 0.1s ease both; }
+    /* ══ MAIN CONTENT ══ */
+    #mainContent{display:none}
+    .container{position:relative;z-index:1;width:min(1100px,calc(100% - 32px));margin:0 auto;padding:36px 0 56px}
+    .hero{padding:40px 44px;border:1px solid var(--border);border-radius:28px;background:linear-gradient(145deg,rgba(255,245,220,.06),rgba(255,245,220,.02));backdrop-filter:blur(20px);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,235,180,.06);position:relative;overflow:hidden}
+    .hero-glow{position:absolute;top:-60px;left:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,160,74,.15),transparent 70%);pointer-events:none}
+    .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;position:relative;z-index:1}
+    .hero-title{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2.6rem,5vw,4.2rem);font-weight:900;line-height:.95;letter-spacing:-.03em;background:linear-gradient(135deg,var(--gold2) 0%,var(--gold) 50%,#b8893a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-subtitle{margin-top:10px;color:var(--muted);font-size:1rem;font-weight:300}
+    .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+    .badge{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:rgba(201,160,74,.08);color:var(--gold2);font-size:.85rem;font-weight:500;white-space:nowrap}
+    .discord-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid rgba(88,101,242,.35);background:rgba(88,101,242,.12);color:#a5acf8;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;text-decoration:none;white-space:nowrap;transition:background .2s,border-color .2s,color .2s,transform .2s}
+    .discord-btn:hover{background:rgba(88,101,242,.25);border-color:rgba(88,101,242,.6);color:#c5caff;transform:translateY(-2px)}
+    .discord-icon{width:16px;height:16px;flex-shrink:0}
+    .welcome-badge{padding:8px 16px;border-radius:999px;border:1px solid rgba(134,239,172,.25);background:rgba(134,239,172,.08);color:#86efac;font-size:.85rem;font-weight:500;white-space:nowrap}
+    .search-wrap{position:relative;z-index:1;margin-top:28px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    .search{flex:1 1 300px;display:flex;align-items:center;gap:10px;padding:13px 18px;border-radius:14px;border:1px solid var(--border);background:rgba(12,10,8,.6);transition:border-color .2s}
+    .search:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,160,74,.1)}
+    .search-icon{color:var(--gold);font-size:.95rem;flex-shrink:0}
+    .search input{width:100%;border:none;outline:none;background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.95rem}
+    .search input::placeholder{color:#5e5347}
+    .count{color:var(--muted);font-size:.9rem;letter-spacing:.02em}
+    .divider{margin:34px 0 22px;display:flex;align-items:center;gap:16px}
+    .divider h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+    .divider-line{flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent)}
+    .divider-sub{color:var(--muted);font-size:.88rem}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+    .game-card{display:block;text-decoration:none;color:inherit;padding:22px 20px 20px;border-radius:22px;border:1px solid var(--border);background:linear-gradient(150deg,rgba(255,245,220,.055),rgba(255,245,220,.02));backdrop-filter:blur(10px);box-shadow:0 8px 32px rgba(0,0,0,.4);transition:transform .22s cubic-bezier(.22,.68,0,1.4),border-color .22s,box-shadow .22s;position:relative;overflow:hidden;min-height:160px;cursor:pointer}
+    .game-card::before{content:'';position:absolute;bottom:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(201,160,74,.12),transparent 70%);pointer-events:none}
+    .game-card:hover{transform:translateY(-5px) scale(1.015);border-color:rgba(201,160,74,.35);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 0 1px rgba(201,160,74,.12)}
+    .tag{position:absolute;top:16px;right:16px;padding:4px 10px;border-radius:999px;font-size:.7rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+    .tag-new{background:rgba(201,160,74,.14);color:var(--gold2);border:1px solid rgba(201,160,74,.22)}
+    .tag-classic{background:rgba(180,140,100,.12);color:#c8a87a;border:1px solid rgba(180,140,100,.2)}
+    .icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:1.55rem;margin-bottom:14px;background:linear-gradient(145deg,rgba(201,160,74,.2),rgba(140,100,40,.15));border:1px solid rgba(201,160,74,.18);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+    .game-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+    .empty-state{grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted)}
+    .empty-state .empty-icon{font-size:2.5rem;margin-bottom:12px}
+    .footer{margin-top:36px;text-align:center;color:#3d3228;font-size:.85rem;letter-spacing:.04em}
+    .footer span{color:var(--gold)}
+    .hidden{display:none !important}
+    @media(max-width:640px){.hero{padding:24px 20px;border-radius:20px}.game-card{min-height:140px}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .hero{animation:fadeUp .5s ease both}
+    .divider{animation:fadeUp .5s .1s ease both}
   </style>
 </head>
 <body>
 
-  <!-- ══ INTRO LAYER (splash bg + sliding boxes) ══ -->
+  <!-- ══ COOKIE BANNER ══ -->
+  <div id="cookieBanner">
+    <p class="cookie-text"><strong>🍪 We use cookies</strong> to remember your password and track activity for the admin panel. By continuing you agree to this.</p>
+    <button class="cookie-accept" id="cookieAccept">Accept & Continue</button>
+  </div>
+
+  <!-- ══ INTRO LAYER ══ -->
   <div id="introLayer">
+    <div id="splashBg"></div>
     <img id="splashLogo" src="https://raw.githubusercontent.com/educommitscrimes/imnages/refs/heads/main/Totally-Classroom.png" alt="Totally Classroom" />
     <div id="introBoxWrap">
+
       <!-- Checking box -->
       <div class="pw-box" id="checkingBox">
         <div class="pw-lock" id="checkIcon">⏳</div>
@@ -326,6 +164,7 @@
         <div class="check-bar-wrap"><div class="check-bar" id="checkBar"></div></div>
         <p class="check-status" id="checkStatus"></p>
       </div>
+
       <!-- Login box -->
       <div class="pw-box" id="pwBox">
         <div class="pw-lock">🔒</div>
@@ -337,10 +176,59 @@
         </div>
         <p class="pw-error hidden" id="pwError">Incorrect password. Try again.</p>
       </div>
+
+      <!-- Name box -->
+      <div class="pw-box" id="nameBox">
+        <div class="pw-lock">👋</div>
+        <div class="pw-title">Welcome!</div>
+        <p class="pw-subtitle">Enter your name to continue</p>
+        <div class="pw-input-wrap">
+          <input class="pw-input" id="nameInput" type="text" placeholder="Your name…" autocomplete="off" maxlength="32" />
+          <button class="pw-btn" id="nameBtn">Let's Go →</button>
+        </div>
+        <p class="pw-error hidden" id="nameError">Please enter your name.</p>
+      </div>
+
+      <!-- Admin password box -->
+      <div class="pw-box" id="adminPwBox">
+        <div class="pw-lock">🛡️</div>
+        <div class="pw-title">Admin Access</div>
+        <p class="pw-subtitle">Enter admin password. <strong style="color:#f87171">One chance only.</strong></p>
+        <div class="pw-input-wrap">
+          <input class="pw-input" id="adminPwInput" type="password" placeholder="Admin password…" autocomplete="off" />
+          <button class="pw-btn" id="adminPwBtn">Verify →</button>
+        </div>
+        <p class="pw-error hidden" id="adminPwError">Wrong password. Reloading…</p>
+      </div>
+
     </div>
   </div>
 
-  <!-- ══ GAME IFRAME OVERLAY ══ -->
+  <!-- ══ ADMIN PANEL ══ -->
+  <div id="adminPanel">
+    <div class="admin-inner">
+      <div class="admin-header">
+        <div class="admin-title">🛡️ Admin Panel</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="admin-clear" id="adminClearBtn">🗑️ Clear Logs</button>
+          <button class="admin-logout" id="adminLogoutBtn">← Exit Panel</button>
+        </div>
+      </div>
+      <div class="admin-stats">
+        <div class="stat-card"><div class="stat-num" id="statVisitors">0</div><div class="stat-label">Total Visitors</div></div>
+        <div class="stat-card"><div class="stat-num" id="statGames">0</div><div class="stat-label">Games Played</div></div>
+        <div class="stat-card"><div class="stat-num" id="statToday">0</div><div class="stat-label">Visitors Today</div></div>
+      </div>
+      <div class="admin-section-title">Visitor Logs</div>
+      <table class="log-table">
+        <thead><tr><th>Name</th><th>Joined</th><th>Games Played</th></tr></thead>
+        <tbody id="logTableBody"></tbody>
+      </table>
+      <div class="no-logs hidden" id="noLogs">No visitors yet.</div>
+    </div>
+  </div>
+
+  <!-- ══ GAME IFRAME ══ -->
   <div id="gameOverlay">
     <div class="game-topbar">
       <span class="game-topbar-title" id="gameTitle">Game</span>
@@ -361,12 +249,11 @@
           </div>
           <div class="top-right">
             <a class="discord-btn" href="https://discord.gg/QepPV56UZZ" target="_blank" rel="noopener noreferrer">
-              <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963a.074.074 0 0 0-.041-.104 13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
-              </svg>
+              <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963a.074.074 0 0 0-.041-.104 13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
               Join Discord
             </a>
             <div class="badge">⭐ lowellmiddleschool</div>
+            <span class="welcome-badge" id="welcomeBadge"></span>
           </div>
         </div>
         <div class="search-wrap">
@@ -377,23 +264,236 @@
           <div class="count" id="gameCount"></div>
         </div>
       </div>
-
-      <div class="divider">
-        <h2>Games</h2>
-        <div class="divider-line"></div>
-        <span class="divider-sub">Click any card to play</span>
-      </div>
-
+      <div class="divider"><h2>Games</h2><div class="divider-line"></div><span class="divider-sub">Click any card to play</span></div>
       <div class="grid" id="gameGrid"></div>
-
       <div class="footer">Made with <span>♥</span> by someone in lowellmiddleschool</div>
     </div>
   </div>
 
   <script>
+    const CORRECT_PASSWORD = 'lowell123';
+    const ADMIN_USERNAME   = 'eduu';
+    const ADMIN_PASSWORD   = '0424';
+    const STORAGE_KEY      = 'tc_auth';
+    const LOGS_KEY         = 'tc_logs';
+    const COOKIE_KEY       = 'tc_cookies';
+    const WEBHOOK          = 'https://discordapp.com/api/webhooks/1500964807363268760/WWeibrg27fowPNJFpkOqYSv5B2nrJMmukklp8wN_1hUpdjumdyJOl1FDuVCN9Waoulbl';
 
+    let currentUser = null;
+    let currentSession = null;
+
+    // ══ DISCORD ══
+    function sendToDiscord(msg) {
+      fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: msg })
+      }).catch(() => {});
+    }
+
+    // ══ LOGS ══
+    function getLogs() {
+      try { return JSON.parse(localStorage.getItem(LOGS_KEY)) || []; } catch { return []; }
+    }
+    function saveLogs(logs) {
+      localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+    }
+    function logVisitor(name) {
+      const logs = getLogs();
+      const entry = { name, time: new Date().toISOString(), games: [] };
+      logs.unshift(entry);
+      saveLogs(logs);
+      currentSession = entry;
+      return entry;
+    }
+    function logGame(gameName) {
+      if (!currentSession) return;
+      const logs = getLogs();
+      const entry = logs.find(l => l.name === currentSession.name && l.time === currentSession.time);
+      if (entry && !entry.games.includes(gameName)) {
+        entry.games.push(gameName);
+        saveLogs(logs);
+      }
+    }
+
+    // ══ COOKIE BANNER ══
+    const cookieBanner = document.getElementById('cookieBanner');
+    if (!localStorage.getItem(COOKIE_KEY)) {
+      setTimeout(() => cookieBanner.classList.add('show'), 800);
+    }
+    document.getElementById('cookieAccept').addEventListener('click', () => {
+      localStorage.setItem(COOKIE_KEY, '1');
+      cookieBanner.classList.remove('show');
+    });
+
+    // ══ INTRO ELEMENTS ══
+    const introLayer  = document.getElementById('introLayer');
+    const checkingBox = document.getElementById('checkingBox');
+    const checkBar    = document.getElementById('checkBar');
+    const checkIcon   = document.getElementById('checkIcon');
+    const checkStatus = document.getElementById('checkStatus');
+    const pwBox       = document.getElementById('pwBox');
+    const pwInput     = document.getElementById('pwInput');
+    const pwBtn       = document.getElementById('pwBtn');
+    const pwError     = document.getElementById('pwError');
+    const nameBox     = document.getElementById('nameBox');
+    const nameInput   = document.getElementById('nameInput');
+    const nameBtn     = document.getElementById('nameBtn');
+    const nameError   = document.getElementById('nameError');
+    const adminPwBox  = document.getElementById('adminPwBox');
+    const adminPwInput= document.getElementById('adminPwInput');
+    const adminPwBtn  = document.getElementById('adminPwBtn');
+    const adminPwError= document.getElementById('adminPwError');
+    const mainContent = document.getElementById('mainContent');
+    const adminPanel  = document.getElementById('adminPanel');
+
+    function slideIn(box) {
+      box.classList.remove('slide-out');
+      void box.offsetWidth;
+      box.classList.add('slide-in');
+    }
+    function slideOut(box, cb) {
+      box.classList.remove('slide-in');
+      box.classList.add('slide-out');
+      setTimeout(() => { if (cb) cb(); }, 520);
+    }
+    function hideIntro(cb) {
+      [checkingBox, pwBox, nameBox, adminPwBox].forEach(b => {
+        b.classList.remove('slide-in'); b.classList.add('slide-out');
+      });
+      setTimeout(() => {
+        introLayer.classList.add('fade-out');
+        setTimeout(() => { introLayer.style.display = 'none'; if (cb) cb(); }, 650);
+      }, 300);
+    }
+
+    function enterSite() {
+      hideIntro(() => {
+        mainContent.style.display = 'block';
+        document.getElementById('welcomeBadge').textContent = '👤 ' + currentUser;
+        buildGrid();
+        updateCount();
+      });
+    }
+
+    function enterAdmin() {
+      hideIntro(() => {
+        adminPanel.style.display = 'block';
+        renderAdminPanel();
+      });
+    }
+
+    // ══ FLOW ══
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      setTimeout(() => {
+        slideIn(checkingBox);
+        setTimeout(() => { checkBar.style.width = '100%'; }, 80);
+
+        if (saved === CORRECT_PASSWORD) {
+          setTimeout(() => {
+            checkIcon.textContent = '✅';
+            checkStatus.textContent = 'Checked — logging you in!';
+            checkStatus.classList.add('ok');
+          }, 900);
+          setTimeout(() => slideOut(checkingBox, () => slideIn(nameBox)), 1900);
+        } else {
+          setTimeout(() => {
+            checkIcon.textContent = '❌';
+            checkStatus.textContent = 'Error — no password found.';
+            checkStatus.classList.add('error');
+          }, 900);
+          setTimeout(() => slideOut(checkingBox, () => { slideIn(pwBox); pwInput.focus(); }), 2000);
+        }
+      }, 2000);
+    });
+
+    // Login
+    pwBtn.addEventListener('click', tryPassword);
+    pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryPassword(); });
+    function tryPassword() {
+      if (pwInput.value === CORRECT_PASSWORD) {
+        localStorage.setItem(STORAGE_KEY, CORRECT_PASSWORD);
+        slideOut(pwBox, () => { slideIn(nameBox); nameInput.focus(); });
+      } else {
+        pwError.classList.remove('hidden');
+        pwBox.classList.remove('shake'); void pwBox.offsetWidth; pwBox.classList.add('shake');
+        pwInput.value = ''; pwInput.focus();
+      }
+    }
+
+    // Name
+    nameBtn.addEventListener('click', tryName);
+    nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryName(); });
+    function tryName() {
+      const name = nameInput.value.trim();
+      if (!name) { nameError.classList.remove('hidden'); return; }
+      currentUser = name;
+      if (name.toLowerCase() === ADMIN_USERNAME) {
+        // Admin flow
+        slideOut(nameBox, () => { slideIn(adminPwBox); adminPwInput.focus(); });
+      } else {
+        // Regular user
+        logVisitor(name);
+        const t = new Date().toLocaleString();
+        sendToDiscord(`👤 **${name}** just joined Totally Classroom! _(${t})_`);
+        enterSite();
+      }
+    }
+
+    // Admin password — ONE CHANCE
+    adminPwBtn.addEventListener('click', tryAdminPw);
+    adminPwInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryAdminPw(); });
+    function tryAdminPw() {
+      if (adminPwInput.value === ADMIN_PASSWORD) {
+        currentUser = ADMIN_USERNAME;
+        sendToDiscord(`🛡️ **Admin (eduu)** logged into the admin panel.`);
+        enterAdmin();
+      } else {
+        adminPwError.classList.remove('hidden');
+        adminPwInput.disabled = true;
+        adminPwBtn.disabled   = true;
+        setTimeout(() => location.reload(), 1500);
+      }
+    }
+
+    // ══ ADMIN PANEL ══
+    function renderAdminPanel() {
+      const logs = getLogs();
+      const today = new Date().toDateString();
+      document.getElementById('statVisitors').textContent = logs.length;
+      document.getElementById('statGames').textContent = logs.reduce((a, l) => a + l.games.length, 0);
+      document.getElementById('statToday').textContent = logs.filter(l => new Date(l.time).toDateString() === today).length;
+      const tbody = document.getElementById('logTableBody');
+      const noLogs = document.getElementById('noLogs');
+      tbody.innerHTML = '';
+      if (logs.length === 0) { noLogs.classList.remove('hidden'); return; }
+      noLogs.classList.add('hidden');
+      logs.forEach(l => {
+        const tr = document.createElement('tr');
+        const dt = new Date(l.time);
+        const timeStr = dt.toLocaleDateString() + ' ' + dt.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        const gamesTags = l.games.length
+          ? l.games.map(g => `<span class="log-game-tag">${g}</span>`).join('')
+          : '<span style="color:var(--muted);font-size:.82rem">No games yet</span>';
+        tr.innerHTML = `<td><span class="log-name">${l.name}</span></td><td><span class="log-time">${timeStr}</span></td><td><div class="log-games">${gamesTags}</div></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('adminClearBtn').addEventListener('click', () => {
+      if (confirm('Clear all visitor logs?')) { localStorage.removeItem(LOGS_KEY); renderAdminPanel(); }
+    });
+    document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+      adminPanel.style.display = 'none';
+      mainContent.style.display = 'block';
+      currentUser = 'Admin';
+      document.getElementById('welcomeBadge').textContent = '🛡️ Admin';
+      buildGrid(); updateCount();
+    });
+
+    // ══ GAMES ══
     const GAMES = [
-      // Original games
       { name: 'Space Clicker',            file: 'spaceclicker.html',            icon: '🚀', tag: 'new',     keys: 'space clicker clicking' },
       { name: 'Dino Game',                file: 'Dino.html',                    icon: '🦖', tag: 'classic', keys: 'dino game dinosaur runner endless' },
       { name: 'Flappy Bird',              file: 'flappybird.html',              icon: '🐦', tag: 'new',     keys: 'flappy bird fly pipes' },
@@ -406,197 +506,115 @@
       { name: 'Crazy Cars',               file: 'crazycars.html',               icon: '🏎️', tag: 'new',     keys: 'crazy cars racing driving fast' },
       { name: 'Temple Run 2',             file: 'templerun2.html',              icon: '🏛️', tag: 'new',     keys: 'temple run 2 endless runner jungle' },
       { name: 'Tower Blocks',             file: 'towerblocks.html',             icon: '🏗️', tag: 'new',     keys: 'tower blocks stacking building' },
-      { name: 'Time Shooter 2',           file: 'timeshooter2.html',            icon: '🎯', tag: 'new',     keys: 'time shooter 2 slow motion fps shooting' },
+      { name: 'Time Shooter 2',           file: 'timeshooter2.html',            icon: '🎯', tag: 'new',     keys: 'time shooter 2 slow motion fps' },
       { name: 'Slope 2',                  file: 'slope2.html',                  icon: '⚡', tag: 'new',     keys: 'slope 2 ball rolling speed' },
       { name: 'Red Ball 4',               file: 'RedBall4.html',                icon: '🔴', tag: 'classic', keys: 'red ball 4 platformer puzzle rolling' },
       { name: 'Basketball Legends',       file: 'basketballlegends.html',       icon: '🏀', tag: 'new',     keys: 'basketball legends sports 2 player' },
       { name: 'Brawl Stars',              file: 'BrawlStars.html',              icon: '⭐', tag: 'new',     keys: 'brawl stars brawler battle arena' },
       { name: "Edy's Car Simulator",      file: 'edyscarsimulator.html',        icon: '🚙', tag: 'new',     keys: 'edys car simulator driving physics' },
-      { name: 'Retro Bowl',               file: 'retrobowl.html',               icon: '🏈', tag: 'new',     keys: 'retro bowl american football nfl sports' },
-      { name: 'Rocket Goal',              file: 'rocketgoal.html',              icon: '🎯', tag: 'new',     keys: 'rocket goal soccer football car' },
+      { name: 'Retro Bowl',               file: 'retrobowl.html',               icon: '🏈', tag: 'new',     keys: 'retro bowl american football nfl' },
+      { name: 'Rocket Goal',              file: 'rocketgoal.html',              icon: '🎯', tag: 'new',     keys: 'rocket goal soccer football' },
       { name: 'Snow Rider',               file: 'snowrider.html',               icon: '🏂', tag: 'new',     keys: 'snow rider 3d snowboard skiing winter' },
       { name: 'EagleCraft',               file: 'EagleCraft.html',              icon: '🦅', tag: 'new',     keys: 'eaglecraft minecraft craft build survival' },
       { name: '2D Shooting',              file: '2DShooting.html',              icon: '🔫', tag: 'new',     keys: '2d shooting shooter action bullet' },
       { name: '3Dash',                    file: '3dash.html',                   icon: '🌀', tag: 'new',     keys: '3dash geometry dash 3d rhythm' },
-      // New games
-      { name: 'Among Us',                 file: 'clamongus.html',               icon: '🛸', tag: 'new',     keys: 'among us clamongus crewmate impostor' },
-      { name: 'Angry Birds',              file: 'clangrybirds.html',            icon: '🐦', tag: 'new',     keys: 'angry birds clangrybirds slingshot pigs' },
-      { name: 'Blaze Drifter',            file: 'clblazedrifter.html',          icon: '🔥', tag: 'new',     keys: 'blaze drifter clblazedrifter racing drift' },
-      { name: 'Boxing Random',            file: 'clboxingrandom.html',          icon: '🥊', tag: 'new',     keys: 'boxing random clboxingrandom fight punch' },
-      { name: 'Crossy Road',              file: 'clcrossyroad.html',            icon: '🐔', tag: 'new',     keys: 'crossy road clcrossyroad chicken hop' },
-      { name: 'Cut the Rope',             file: 'clcuttherope.html',            icon: '🍬', tag: 'classic', keys: 'cut the rope clcuttherope candy puzzle' },
-      { name: 'Death Chase',              file: 'cldeathchase.html',            icon: '💀', tag: 'new',     keys: 'death chase cldeathchase moto bike racing' },
-      { name: 'Dunk Shot',                file: 'cldunkshot.html',              icon: '🏀', tag: 'new',     keys: 'dunk shot cldunkshot basketball bounce' },
-      { name: 'Extreme Run 3D',           file: 'clextremerun3d.html',          icon: '🏃', tag: 'new',     keys: 'extreme run 3d clextremerun3d parkour runner' },
-      { name: 'Fall Guys',                file: 'clfallguys.html',              icon: '🫘', tag: 'new',     keys: 'fall guys clfallguys battle royale jelly' },
-      { name: 'Fireboy & Watergirl 2',    file: 'clfireboyandwatergirl2.html',  icon: '🔥', tag: 'classic', keys: 'fireboy watergirl 2 clfireboyandwatergirl2 puzzle coop' },
-      { name: 'Fruit Ninja',              file: 'clfruitninja.html',            icon: '🍉', tag: 'classic', keys: 'fruit ninja clfruitninja slice chop' },
-      { name: 'Car Driving Simulator',    file: 'clUltimatecardrivingsimulator.html', icon: '🚘', tag: 'new', keys: 'ultimate car driving simulator clultimate physics drive' },
-      { name: 'Uno',                      file: 'cluno.html',                   icon: '🃏', tag: 'new',     keys: 'uno cluno cards game reverse skip' },
-      { name: 'Drive Mad',                file: 'DriveMad.html',                icon: '🏁', tag: 'new',     keys: 'drive mad drivemad obstacle car physics' },
-      { name: 'Helios',                   file: 'Helios.html',                  icon: '☀️', tag: 'new',     keys: 'helios space shooter bullet adventure' },
-      { name: 'A Dark Room',                  file: 'clADarkRoom.html',                icon: '🕯️', tag: 'new',     keys: 'a dark room cladarkroom survival text' },
-      { name: 'ADOFAI',                        file: 'clADOFAI.html',                   icon: '🎵', tag: 'new',     keys: 'adofai cladofai rhythm music dance' },
-      { name: 'Agariolite',                    file: 'clagariolite.html',               icon: '🟢', tag: 'new',     keys: 'agariolite clagariolite agar eat grow' },
-      { name: 'Backrooms',                     file: 'clbackrooms.html',                icon: '🚪', tag: 'new',     keys: 'backrooms clbackrooms liminal horror maze' },
-      { name: "Baldi's Basics",                file: 'clbaldisbasics.html',             icon: '📏', tag: 'new',     keys: "baldis basics clbaldisbasics school horror" },
-      { name: 'Battle Karts',                  file: 'clbattlekarts.html',              icon: '🏎️', tag: 'new',     keys: 'battle karts clbattlekarts racing kart' },
-      { name: 'Gorilla Tag',                   file: 'clgorillatag.html',               icon: '🦍', tag: 'new',     keys: 'gorilla tag clgorillatag vr tag chase' },
-      { name: 'Ice Dodo',                      file: 'clicedodo.html',                  icon: '🐦', tag: 'new',     keys: 'ice dodo clicedodo bird slide puzzle' },
-      { name: 'Infinite Craft',                file: 'clinfinitecraft.html',            icon: '⚗️', tag: 'new',     keys: 'infinite craft clinfinitecraft craft combine elements' },
-      { name: 'Link Game',                     file: 'clinkgame.html',                  icon: '🔗', tag: 'new',     keys: 'link game clinkgame connect puzzle chain' },
-      { name: 'Kalikan',                       file: 'clkalikan.html',                  icon: '⚔️', tag: 'new',     keys: 'kalikan clkalikan battle fight arena' },
-      { name: 'Kart Bros',                     file: 'clkartbros.html',                 icon: '🏁', tag: 'new',     keys: 'kart bros clkartbros racing mario kart' },
-      { name: 'Kill the Ice Age Baby',         file: 'clkilltheiceagebabyadventure.html', icon: '🦣', tag: 'new',   keys: 'kill the ice age baby adventure clkill mammoth' },
-      { name: 'Rocket Soccer Derby',           file: 'clrocketsoccerderby.html',        icon: '🚀', tag: 'new',     keys: 'rocket soccer derby clrocketsoccerderby car ball goal' },
-      { name: 'Run 3',                         file: 'clrun3.html',                     icon: '👾', tag: 'classic', keys: 'run 3 clrun3 endless tunnel space runner' },
-      { name: 'Russian Sandbox',               file: 'clrussiansandbox.html',           icon: '🏗️', tag: 'new',     keys: 'russian sandbox clrussiansandbox physics destruction' },
-      { name: 'Sniper V2',                     file: 'clsniperv2.html',                 icon: '🎯', tag: 'new',     keys: 'sniper v2 clsniperv2 shoot aim scope' },
-      { name: 'Soccer Bros',                   file: 'clsoccerbros.html',               icon: '⚽', tag: 'new',     keys: 'soccer bros clsoccerbros football 2 player' },
-      { name: 'Soccer Random',                 file: 'clsoccerrandomgood.html',         icon: '⚽', tag: 'new',     keys: 'soccer random clsoccerrandomgood funny physics' },
-      { name: 'Super Liquid Soccer',           file: 'clsuperliquidsoccer.html',        icon: '💧', tag: 'new',     keys: 'super liquid soccer clsuperliquidsoccer water ball' },
-      { name: 'Blackjack',                     file: 'blackjack.html',                  icon: '🃏', tag: 'new',     keys: 'blackjack cards casino 21' },
-      { name: '99 Nights',                     file: 'cl99nightsitf.html',              icon: '🌙', tag: 'new',     keys: '99 nights cl99nightsitf survival tower defense' },
-      { name: 'Amorphous',                     file: 'clamorphous.html',                icon: '🟣', tag: 'new',     keys: 'amorphous clamorphous slime action' },
-      { name: 'Aqua Parkio',                   file: 'claquaparkio.html',               icon: '💧', tag: 'new',     keys: 'aqua parkio claquaparkio water slide race' },
-      { name: 'Small World Cup',               file: 'clasmallworldcup.html',           icon: '⚽', tag: 'new',     keys: 'small world cup clasmallworldcup soccer football' },
-      { name: 'Awesome Tanks',                 file: 'clawesometanks.html',             icon: '🪖', tag: 'new',     keys: 'awesome tanks clawesometanks battle shoot' },
-      { name: 'Backrooms 2D',                  file: 'clbackrooms2D.html',              icon: '🚪', tag: 'new',     keys: 'backrooms 2d clbackrooms2d liminal horror maze' },
-      { name: 'Bad Time Simulator',            file: 'clbadtimesim.html',               icon: '💀', tag: 'new',     keys: 'bad time simulator clbadtimesim sans undertale dodge' },
-      { name: 'Basket Slam Dunk 2',            file: 'clbasketslamdunk2.html',          icon: '🏀', tag: 'new',     keys: 'basket slam dunk 2 clbasketslamdunk2 basketball' },
-      { name: 'Bloons',                        file: 'clbloons.html',                   icon: '🎈', tag: 'classic', keys: 'bloons clbloons balloon tower defense pop' },
-      { name: 'Bloons 2',                      file: 'clbloons2.html',                  icon: '🎈', tag: 'classic', keys: 'bloons 2 clbloons2 balloon tower defense pop' },
-      { name: 'Capybara Clicker',              file: 'clcapybaraclicker.html',          icon: '🐾', tag: 'new',     keys: 'capybara clicker clcapybaraclicker idle click cute' },
-      { name: 'Deadzed',                       file: 'cldeadzed.html',                  icon: '🧟', tag: 'new',     keys: 'deadzed cldeadzed zombie survival shooter' },
-      { name: 'Doge Miner',                    file: 'cldogeminer.html',                icon: '🐶', tag: 'new',     keys: 'doge miner cldogeminer idle clicker mining' },
-      { name: 'Doomz.io',                      file: 'cldoomzio.html',                  icon: '🔫', tag: 'new',     keys: 'doomzio cldoomzio io shooter battle' },
-      { name: 'Duck Life 2',                   file: 'clducklife2.html',                icon: '🐥', tag: 'classic', keys: 'duck life 2 clducklife2 train race duck' },
-      { name: 'Ducklings.io',                  file: 'clducklingsio.html',              icon: '🦆', tag: 'new',     keys: 'ducklings io clducklingsio gather follow cute' },
-      { name: 'Fairy Tale vs One Piece',       file: 'clfairytalevsonepiece.html',      icon: '🧚', tag: 'new',     keys: 'fairy tale vs one piece clfairytalevsonepiece anime battle' },
-      { name: 'Folder Dungeon',                file: 'clfolderdungeon.html',            icon: '📁', tag: 'new',     keys: 'folder dungeon clfolderdungeon rpg explore rooms' },
-      { name: 'Jailbreak',                     file: 'cljailbreakobbbobob.html',        icon: '🔐', tag: 'new',     keys: 'jailbreak cljailbreak roblox escape heist' },
-      { name: 'Jelly Mario',                   file: 'cljellymario.html',               icon: '🍮', tag: 'classic', keys: 'jelly mario cljellymario wiggly physics funny' },
-      { name: 'Just Fall LOL',                 file: 'cljustfalllol.html',              icon: '😂', tag: 'new',     keys: 'just fall lol cljustfalllol platform battle royale' },
-      { name: 'Just Hit the Button',           file: 'cljusthitthebutton.html',         icon: '🔴', tag: 'new',     keys: 'just hit the button cljusthitthebutton reflex click fast' },
-      { name: 'Kanye Zone',                    file: 'clkanyezone.html',                icon: '🎤', tag: 'new',     keys: 'kanye zone clkanyezone music dodge avoid' },
-      { name: 'Kill Over',                     file: 'clkillover.html',                 icon: '💥', tag: 'new',     keys: 'kill over clkillover action shooter combat' },
-      { name: 'KS2 Teams',                     file: 'clks2teams.html',                 icon: '🏆', tag: 'new',     keys: 'ks2 teams clks2teams sports multiplayer compete' },
-      { name: 'Mario Kart 64',                 file: 'clmariokart64.html',              icon: '🏎️', tag: 'classic', keys: 'mario kart 64 clmariokart64 racing nintendo track' },
-      { name: 'Quake 3',                       file: 'clquake3.html',                   icon: '💣', tag: 'classic', keys: 'quake 3 clquake3 fps shooter arena classic' },
-      { name: 'Quantum Clicker',               file: 'clQuantumClicker.html',           icon: '⚛️', tag: 'new',     keys: 'quantum clicker clquantumclicker idle science upgrade' },
-      { name: 'Table Tanks',                   file: 'cltabletanks.html',               icon: '🪖', tag: 'new',     keys: 'table tanks cltabletanks mini battle shoot' },
-      { name: 'Telephone Trouble',             file: 'clteleponetrouble.html',          icon: '📞', tag: 'new',     keys: 'telephone trouble clteleponetrouble puzzle arcade' },
-      { name: 'The Dead Seat',                 file: 'clthedeadseat.html',              icon: '🪑', tag: 'new',     keys: 'the dead seat clthedeadseat horror puzzle escape' },
-      { name: 'Throw a Potato',                file: 'clthrowapotato.html',             icon: '🥔', tag: 'new',     keys: 'throw a potato clthrowapotato silly toss aim' },
-      { name: 'Trechorous Trails',             file: 'cltrechoroustrials.html',         icon: '⛰️', tag: 'new',     keys: 'trechoroustrials trechorous trails bike motorcycle obstacle' },
-      { name: 'Tung Tung Tung Sahur Hobby',    file: 'cltungtungtungsahurobby.html',    icon: '🥁', tag: 'new',     keys: 'tung tung sahur hobby cltungtung rhythm meme music' },
-      { name: 'Two Ball 3D',                   file: 'cltwoball3d.html',                icon: '🎱', tag: 'new',     keys: 'two ball 3d cltwoball3d rolling dodge obstacle' },
-      { name: 'Vortex',                        file: 'clvortex.html',                   icon: '🌀', tag: 'new',     keys: 'vortex clvortex spin action shooter spiral' },
-      { name: 'Tower Crash 3D',               file: 'cltowercrash3d.html',             icon: '🏗️', tag: 'new',     keys: 'tower crash 3d cltowercrash3d destroy demolish physics' },
-      { name: 'Traffic Jam 3D',               file: 'cltrafficjam3d.html',             icon: '🚦', tag: 'new',     keys: 'traffic jam 3d cltrafficjam3d cars puzzle road' },
-      { name: 'Trees Hate You',               file: 'cltreeshateyou.html',             icon: '🌲', tag: 'new',     keys: 'trees hate you cltreeshateyou dodge obstacle survival' },
+      { name: 'Among Us',                 file: 'clamongus.html',               icon: '🛸', tag: 'new',     keys: 'among us impostor crewmate' },
+      { name: 'Angry Birds',              file: 'clangrybirds.html',            icon: '🐦', tag: 'new',     keys: 'angry birds slingshot pigs' },
+      { name: 'Blaze Drifter',            file: 'clblazedrifter.html',          icon: '🔥', tag: 'new',     keys: 'blaze drifter racing drift' },
+      { name: 'Boxing Random',            file: 'clboxingrandom.html',          icon: '🥊', tag: 'new',     keys: 'boxing random fight punch' },
+      { name: 'Crossy Road',              file: 'clcrossyroad.html',            icon: '🐔', tag: 'new',     keys: 'crossy road chicken hop' },
+      { name: 'Cut the Rope',             file: 'clcuttherope.html',            icon: '🍬', tag: 'classic', keys: 'cut the rope candy puzzle' },
+      { name: 'Death Chase',              file: 'cldeathchase.html',            icon: '💀', tag: 'new',     keys: 'death chase moto bike racing' },
+      { name: 'Dunk Shot',                file: 'cldunkshot.html',              icon: '🏀', tag: 'new',     keys: 'dunk shot basketball bounce' },
+      { name: 'Extreme Run 3D',           file: 'clextremerun3d.html',          icon: '🏃', tag: 'new',     keys: 'extreme run 3d parkour runner' },
+      { name: 'Fall Guys',                file: 'clfallguys.html',              icon: '🫘', tag: 'new',     keys: 'fall guys battle royale jelly' },
+      { name: 'Fireboy & Watergirl 2',    file: 'clfireboyandwatergirl2.html',  icon: '🔥', tag: 'classic', keys: 'fireboy watergirl 2 puzzle coop' },
+      { name: 'Fruit Ninja',              file: 'clfruitninja.html',            icon: '🍉', tag: 'classic', keys: 'fruit ninja slice chop' },
+      { name: 'Car Driving Simulator',    file: 'clUltimatecardrivingsimulator.html', icon: '🚘', tag: 'new', keys: 'ultimate car driving simulator physics' },
+      { name: 'Uno',                      file: 'cluno.html',                   icon: '🃏', tag: 'new',     keys: 'uno cards game reverse skip' },
+      { name: 'Drive Mad',                file: 'DriveMad.html',                icon: '🏁', tag: 'new',     keys: 'drive mad obstacle car physics' },
+      { name: 'Helios',                   file: 'Helios.html',                  icon: '☀️', tag: 'new',     keys: 'helios space shooter bullet' },
+      { name: 'A Dark Room',              file: 'clADarkRoom.html',             icon: '🕯️', tag: 'new',     keys: 'a dark room survival text' },
+      { name: 'ADOFAI',                   file: 'clADOFAI.html',                icon: '🎵', tag: 'new',     keys: 'adofai rhythm music dance' },
+      { name: 'Agariolite',               file: 'clagariolite.html',            icon: '🟢', tag: 'new',     keys: 'agariolite agar eat grow' },
+      { name: 'Backrooms',                file: 'clbackrooms.html',             icon: '🚪', tag: 'new',     keys: 'backrooms liminal horror maze' },
+      { name: "Baldi's Basics",           file: 'clbaldisbasics.html',          icon: '📏', tag: 'new',     keys: "baldis basics school horror" },
+      { name: 'Battle Karts',             file: 'clbattlekarts.html',           icon: '🏎️', tag: 'new',     keys: 'battle karts racing kart' },
+      { name: 'Gorilla Tag',              file: 'clgorillatag.html',            icon: '🦍', tag: 'new',     keys: 'gorilla tag vr chase' },
+      { name: 'Ice Dodo',                 file: 'clicedodo.html',               icon: '🐦', tag: 'new',     keys: 'ice dodo bird slide puzzle' },
+      { name: 'Infinite Craft',           file: 'clinfinitecraft.html',         icon: '⚗️', tag: 'new',     keys: 'infinite craft combine elements' },
+      { name: 'Link Game',                file: 'clinkgame.html',               icon: '🔗', tag: 'new',     keys: 'link game connect puzzle chain' },
+      { name: 'Kalikan',                  file: 'clkalikan.html',               icon: '⚔️', tag: 'new',     keys: 'kalikan battle fight arena' },
+      { name: 'Kart Bros',                file: 'clkartbros.html',              icon: '🏁', tag: 'new',     keys: 'kart bros racing mario kart' },
+      { name: 'Kill the Ice Age Baby',    file: 'clkilltheiceagebabyadventure.html', icon: '🦣', tag: 'new', keys: 'kill the ice age baby adventure mammoth' },
+      { name: 'Rocket Soccer Derby',      file: 'clrocketsoccerderby.html',     icon: '🚀', tag: 'new',     keys: 'rocket soccer derby car ball goal' },
+      { name: 'Run 3',                    file: 'clrun3.html',                  icon: '👾', tag: 'classic', keys: 'run 3 endless tunnel space runner' },
+      { name: 'Russian Sandbox',          file: 'clrussiansandbox.html',        icon: '🏗️', tag: 'new',     keys: 'russian sandbox physics destruction' },
+      { name: 'Sniper V2',                file: 'clsniperv2.html',              icon: '🎯', tag: 'new',     keys: 'sniper v2 shoot aim scope' },
+      { name: 'Soccer Bros',              file: 'clsoccerbros.html',            icon: '⚽', tag: 'new',     keys: 'soccer bros football 2 player' },
+      { name: 'Soccer Random',            file: 'clsoccerrandomgood.html',      icon: '⚽', tag: 'new',     keys: 'soccer random funny physics' },
+      { name: 'Super Liquid Soccer',      file: 'clsuperliquidsoccer.html',     icon: '💧', tag: 'new',     keys: 'super liquid soccer water ball' },
+      { name: 'Tower Crash 3D',           file: 'cltowercrash3d.html',          icon: '🏗️', tag: 'new',     keys: 'tower crash 3d destroy demolish' },
+      { name: 'Traffic Jam 3D',           file: 'cltrafficjam3d.html',          icon: '🚦', tag: 'new',     keys: 'traffic jam 3d cars puzzle road' },
+      { name: 'Trees Hate You',           file: 'cltreeshateyou.html',          icon: '🌲', tag: 'new',     keys: 'trees hate you dodge obstacle survival' },
+      { name: 'Blackjack',                file: 'blackjack.html',               icon: '🃏', tag: 'new',     keys: 'blackjack cards casino 21' },
+      { name: '99 Nights',                file: 'cl99nightsitf.html',           icon: '🌙', tag: 'new',     keys: '99 nights survival tower defense' },
+      { name: 'Amorphous',                file: 'clamorphous.html',             icon: '🟣', tag: 'new',     keys: 'amorphous slime action' },
+      { name: 'Aqua Parkio',              file: 'claquaparkio.html',            icon: '💧', tag: 'new',     keys: 'aqua parkio water slide race' },
+      { name: 'Small World Cup',          file: 'clasmallworldcup.html',        icon: '⚽', tag: 'new',     keys: 'small world cup soccer football' },
+      { name: 'Awesome Tanks',            file: 'clawesometanks.html',          icon: '🪖', tag: 'new',     keys: 'awesome tanks battle shoot' },
+      { name: 'Backrooms 2D',             file: 'clbackrooms2D.html',           icon: '🚪', tag: 'new',     keys: 'backrooms 2d liminal horror maze' },
+      { name: 'Bad Time Simulator',       file: 'clbadtimesim.html',            icon: '💀', tag: 'new',     keys: 'bad time simulator sans undertale dodge' },
+      { name: 'Basket Slam Dunk 2',       file: 'clbasketslamdunk2.html',       icon: '🏀', tag: 'new',     keys: 'basket slam dunk 2 basketball' },
+      { name: 'Bloons',                   file: 'clbloons.html',                icon: '🎈', tag: 'classic', keys: 'bloons balloon tower defense pop' },
+      { name: 'Bloons 2',                 file: 'clbloons2.html',               icon: '🎈', tag: 'classic', keys: 'bloons 2 balloon tower defense pop' },
+      { name: 'Capybara Clicker',         file: 'clcapybaraclicker.html',       icon: '🐾', tag: 'new',     keys: 'capybara clicker idle click cute' },
+      { name: 'Deadzed',                  file: 'cldeadzed.html',               icon: '🧟', tag: 'new',     keys: 'deadzed zombie survival shooter' },
+      { name: 'Doge Miner',               file: 'cldogeminer.html',             icon: '🐶', tag: 'new',     keys: 'doge miner idle clicker mining' },
+      { name: 'Doomz.io',                 file: 'cldoomzio.html',               icon: '🔫', tag: 'new',     keys: 'doomzio io shooter battle' },
+      { name: 'Duck Life 2',              file: 'clducklife2.html',             icon: '🐥', tag: 'classic', keys: 'duck life 2 train race duck' },
+      { name: 'Ducklings.io',             file: 'clducklingsio.html',           icon: '🦆', tag: 'new',     keys: 'ducklings io gather follow cute' },
+      { name: 'Fairy Tale vs One Piece',  file: 'clfairytalevsonepiece.html',   icon: '🧚', tag: 'new',     keys: 'fairy tale vs one piece anime battle' },
+      { name: 'Folder Dungeon',           file: 'clfolderdungeon.html',         icon: '📁', tag: 'new',     keys: 'folder dungeon rpg explore rooms' },
+      { name: 'Jailbreak',                file: 'cljailbreakobbbobob.html',     icon: '🔐', tag: 'new',     keys: 'jailbreak roblox escape heist' },
+      { name: 'Jelly Mario',              file: 'cljellymario.html',            icon: '🍮', tag: 'classic', keys: 'jelly mario wiggly physics funny' },
+      { name: 'Just Fall LOL',            file: 'cljustfalllol.html',           icon: '😂', tag: 'new',     keys: 'just fall lol platform battle royale' },
+      { name: 'Just Hit the Button',      file: 'cljusthitthebutton.html',      icon: '🔴', tag: 'new',     keys: 'just hit the button reflex click fast' },
+      { name: 'Kanye Zone',               file: 'clkanyezone.html',             icon: '🎤', tag: 'new',     keys: 'kanye zone music dodge avoid' },
+      { name: 'Kill Over',                file: 'clkillover.html',              icon: '💥', tag: 'new',     keys: 'kill over action shooter combat' },
+      { name: 'KS2 Teams',                file: 'clks2teams.html',              icon: '🏆', tag: 'new',     keys: 'ks2 teams sports multiplayer compete' },
+      { name: 'Mario Kart 64',            file: 'clmariokart64.html',           icon: '🏎️', tag: 'classic', keys: 'mario kart 64 racing nintendo track' },
+      { name: 'Quake 3',                  file: 'clquake3.html',                icon: '💣', tag: 'classic', keys: 'quake 3 fps shooter arena classic' },
+      { name: 'Quantum Clicker',          file: 'clQuantumClicker.html',        icon: '⚛️', tag: 'new',     keys: 'quantum clicker idle science upgrade' },
+      { name: 'Table Tanks',              file: 'cltabletanks.html',            icon: '🪖', tag: 'new',     keys: 'table tanks mini battle shoot' },
+      { name: 'Telephone Trouble',        file: 'clteleponetrouble.html',       icon: '📞', tag: 'new',     keys: 'telephone trouble puzzle arcade' },
+      { name: 'The Dead Seat',            file: 'clthedeadseat.html',           icon: '🪑', tag: 'new',     keys: 'the dead seat horror puzzle escape' },
+      { name: 'Throw a Potato',           file: 'clthrowapotato.html',          icon: '🥔', tag: 'new',     keys: 'throw a potato silly toss aim' },
+      { name: 'Trechorous Trails',        file: 'cltrechoroustrials.html',      icon: '⛰️', tag: 'new',     keys: 'trechorous trails bike motorcycle obstacle' },
+      { name: 'Tung Tung Sahur Hobby',    file: 'cltungtungtungsahurobby.html', icon: '🥁', tag: 'new',     keys: 'tung tung sahur hobby rhythm meme' },
+      { name: 'Two Ball 3D',              file: 'cltwoball3d.html',             icon: '🎱', tag: 'new',     keys: 'two ball 3d rolling dodge obstacle' },
+      { name: 'Vortex',                   file: 'clvortex.html',                icon: '🌀', tag: 'new',     keys: 'vortex spin action shooter spiral' },
+      // NEW GAMES
+      { name: 'Baldi Epstein',            file: 'clbaldiepstein.html',          icon: '📏', tag: 'new',     keys: 'baldi epstein school horror' },
+      { name: 'Bergen Truck 201x',        file: 'clbergentruck201x.html',       icon: '🚛', tag: 'new',     keys: 'bergen truck 201x driving haul' },
+      { name: 'Bio Evil 4',               file: 'clbioevil4.html',              icon: '🧟', tag: 'new',     keys: 'bio evil 4 zombie survival horror' },
+      { name: 'Bit Life',                 file: 'clbitlife.html',               icon: '🎲', tag: 'new',     keys: 'bit life life simulator choices' },
+      { name: 'Bunny Land',               file: 'clbunnyland.html',             icon: '🐰', tag: 'new',     keys: 'bunny land rabbit platformer cute' },
+      { name: 'Burger & Frights',         file: 'clburgerandfrights.html',      icon: '🍔', tag: 'new',     keys: 'burger and frights horror food' },
+      { name: 'Burrito Bison',            file: 'clburritobisonlaunchalibre.html', icon: '🌯', tag: 'new',  keys: 'burrito bison launch libre gummy bear' },
+      { name: 'Buster Jam',               file: 'clBusterJam.html',             icon: '🎮', tag: 'new',     keys: 'buster jam action arcade beat' },
+      { name: 'Candy Box 1',              file: 'clcandybox1.html',             icon: '🍬', tag: 'classic', keys: 'candy box 1 idle rpg text' },
+      { name: 'Car Crash 3',              file: 'clcarcrash3.html',             icon: '💥', tag: 'new',     keys: 'car crash 3 derby smash physics' },
+      { name: 'Chess Classic',            file: 'clchessclassic.html',          icon: '♟️', tag: 'classic', keys: 'chess classic strategy board game' },
+      { name: 'Five Nights at Shreks',    file: 'clfivenightsatshreks.html',    icon: '👾', tag: 'new',     keys: 'five nights at shreks fnaf funny horror' },
+      { name: 'Funny Mad Racing',         file: 'clfunnymadracing.html',        icon: '🏎️', tag: 'new',     keys: 'funny mad racing cars silly race' },
+      { name: 'Funny Shooter 2',          file: 'clfunnyshooter2.html',         icon: '😂', tag: 'new',     keys: 'funny shooter 2 action comedy fps' },
+      { name: 'Tag',                      file: 'cltag-.html',                  icon: '🏷️', tag: 'new',     keys: 'tag chase run game' },
+      { name: 'TOTM',                     file: 'cltotm.html',                  icon: '🏆', tag: 'new',     keys: 'totm tournament of the month' },
+      { name: 'Tung Tung Horror',         file: 'cltungtunghorror.html',        icon: '😱', tag: 'new',     keys: 'tung tung horror scary meme' },
     ];
 
-    // ═══════════════════════════════════════
-    // PASSWORD + AUTO-LOGIN
-    // ═══════════════════════════════════════
-    const CORRECT_PASSWORD = 'lowell123';
-    const STORAGE_KEY      = 'tc_auth';
-
-    const introLayer  = document.getElementById('introLayer');
-    const checkingBox = document.getElementById('checkingBox');
-    const checkBar    = document.getElementById('checkBar');
-    const checkIcon   = document.getElementById('checkIcon');
-    const checkStatus = document.getElementById('checkStatus');
-    const pwBox       = document.getElementById('pwBox');
-    const pwInput     = document.getElementById('pwInput');
-    const pwBtn       = document.getElementById('pwBtn');
-    const pwError     = document.getElementById('pwError');
-    const mainContent = document.getElementById('mainContent');
-
-    function enterSite() {
-      // slide active box out then fade intro layer
-      [checkingBox, pwBox].forEach(b => {
-        b.classList.remove('slide-in');
-        b.classList.add('slide-out');
-      });
-      setTimeout(() => {
-        introLayer.classList.add('fade-out');
-        setTimeout(() => {
-          introLayer.style.display = 'none';
-          mainContent.style.display = 'block';
-          buildGrid();
-          updateCount();
-        }, 650);
-      }, 350);
-    }
-
-    function slideIn(box) {
-      box.classList.remove('slide-out');
-      // force reflow so transition fires
-      void box.offsetWidth;
-      box.classList.add('slide-in');
-    }
-
-    function slideOut(box, cb) {
-      box.classList.remove('slide-in');
-      box.classList.add('slide-out');
-      setTimeout(() => { if (cb) cb(); }, 500);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem(STORAGE_KEY);
-
-      // After 2 seconds show the checking box sliding up
-      setTimeout(() => {
-        slideIn(checkingBox);
-
-        // animate bar
-        setTimeout(() => { checkBar.style.width = '100%'; }, 100);
-
-        if (saved === CORRECT_PASSWORD) {
-          setTimeout(() => {
-            checkIcon.textContent = '✅';
-            checkStatus.textContent = 'Checked — logging you in!';
-            checkStatus.classList.add('ok');
-          }, 900);
-          setTimeout(() => enterSite(), 1900);
-        } else {
-          setTimeout(() => {
-            checkIcon.textContent = '❌';
-            checkStatus.textContent = 'Error — no password found.';
-            checkStatus.classList.add('error');
-          }, 900);
-          setTimeout(() => {
-            slideOut(checkingBox, () => {
-              slideIn(pwBox);
-              setTimeout(() => pwInput.focus(), 100);
-            });
-          }, 2000);
-        }
-      }, 2000);
-    });
-
-    function tryPassword() {
-      if (pwInput.value === CORRECT_PASSWORD) {
-        localStorage.setItem(STORAGE_KEY, CORRECT_PASSWORD);
-        enterSite();
-      } else {
-        pwError.classList.remove('hidden');
-        pwBox.classList.remove('shake');
-        void pwBox.offsetWidth;
-        pwBox.classList.add('shake');
-        pwInput.value = '';
-        pwInput.focus();
-      }
-    }
-
-    pwBtn.addEventListener('click', tryPassword);
-    pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryPassword(); });
-
-    // ═══════════════════════════════════════
-    // BUILD GRID
-    // ═══════════════════════════════════════
+    // ══ BUILD GRID ══
     function buildGrid() {
       const grid = document.getElementById('gameGrid');
       grid.innerHTML = '';
@@ -605,19 +623,13 @@
         card.className = 'game-card';
         card.dataset.keys = g.keys + ' ' + g.name.toLowerCase();
         card.style.setProperty('--i', i);
-        card.innerHTML = `
-          <div class="tag tag-${g.tag}">${g.tag === 'classic' ? 'Classic' : 'New'}</div>
-          <div class="icon">${g.icon}</div>
-          <h3 class="game-name">${g.name}</h3>
-        `;
+        card.innerHTML = `<div class="tag tag-${g.tag}">${g.tag === 'classic' ? 'Classic' : 'New'}</div><div class="icon">${g.icon}</div><h3 class="game-name">${g.name}</h3>`;
         card.addEventListener('click', () => openGame(g.file, g.name));
         grid.appendChild(card);
       });
     }
 
-    // ═══════════════════════════════════════
-    // IFRAME GAME LOADER — prevents URL bypass
-    // ═══════════════════════════════════════
+    // ══ GAME LOADER ══
     const gameOverlay = document.getElementById('gameOverlay');
     const gameFrame   = document.getElementById('gameFrame');
     const gameTitle   = document.getElementById('gameTitle');
@@ -628,6 +640,11 @@
       gameTitle.textContent = name;
       gameOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+      // Track
+      logGame(name);
+      if (currentUser && currentUser !== ADMIN_USERNAME) {
+        sendToDiscord(`🎮 **${currentUser}** is now playing **${name}**`);
+      }
     }
 
     function closeGame() {
@@ -637,15 +654,9 @@
     }
 
     closeBtn.addEventListener('click', closeGame);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && gameOverlay.classList.contains('active')) closeGame(); });
 
-    // Close with Escape key
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && gameOverlay.classList.contains('active')) closeGame();
-    });
-
-    // ═══════════════════════════════════════
-    // SEARCH
-    // ═══════════════════════════════════════
+    // ══ SEARCH ══
     const searchInput = document.getElementById('searchInput');
     const gameCount   = document.getElementById('gameCount');
 
@@ -662,9 +673,7 @@
           empty.innerHTML = '<div class="empty-icon">🔍</div><p>No games match your search.</p>';
           grid.appendChild(empty);
         }
-      } else {
-        if (empty) empty.remove();
-      }
+      } else { if (empty) empty.remove(); }
     }
 
     searchInput.addEventListener('input', () => {
@@ -675,7 +684,6 @@
       });
       updateCount();
     });
-
   </script>
 </body>
 </html>
